@@ -1,0 +1,19 @@
+# kill any running gtk_battery command so that it can be verwritten
+pkill gtk_battery
+
+# create b directory in /home/pi,f it does ot exist
+[ ! -d /home/pi/bin  ] && mkdir /home/pi/bin1
+
+#copy necessary files to /home/pi/bin
+cp battery_icon.png ~/bin
+cp gtk_battery ~/bin
+
+# add line to lxsession autostart, if it does not already exist
+if ! grep -q "gtk_battery" /home/pi/.config/lxsession/LXDE-pi/autostart
+then
+    cp /home/pi/.config/lxsession/LXDE-pi/autostart ./lxsession_autostart_backup
+    echo "@gtk_battery > /dev/null &" >> /home/pi/.config/lxsession/LXDE-pi/autostart
+fi
+
+#restart gtk_battery in background making sure that it lives on if calling console is closed
+nohup gtk_battery > /dev/null
