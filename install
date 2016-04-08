@@ -1,8 +1,12 @@
 # kill any running gtk_battery command so that it can be verwritten
 pkill gtk_battery
 
-# create b directory in /home/pi,f it does ot exist
-[ ! -d /home/pi/bin  ] && mkdir /home/pi/bin1
+# create b directory /home/pi, if it does ot exist
+[ ! -d /home/pi/bin  ] && mkdir /home/pi/bin
+
+#make sure that files are executable
+chmod +x gtk_battery
+chmod +x install
 
 #copy necessary files to /home/pi/bin
 cp battery_icon.png ~/bin
