@@ -19,4 +19,4 @@ then
 fi
 
 #restart gtk_battery in background making sure that it lives on if calling console is closed
-nohup gtk_battery > /dev/null
+nohup /home/pi/bin/gtk_battery > /dev/null
