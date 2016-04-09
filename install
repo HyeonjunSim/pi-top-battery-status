@@ -6,7 +6,6 @@ pkill gtk_battery
 
 #make sure that files are executable
 chmod +x gtk_battery
-chmod +x install
 
 #copy necessary files to /home/pi/bin
 cp battery_icon.png ~/bin
