@@ -203,11 +203,11 @@ static gboolean timer_event(GtkWidget *widget)
 	cairo_destroy (cr);
 	
 	// Update status in main Window
-	sprintf(str, "<span foreground=\"black\" size=\"medium\">Battery status: %s</span>", sstatus);
+	sprintf(str, "<span size=\"medium\">Battery status: %s</span>", sstatus);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel2), str);
-	sprintf(str,"<span foreground=\"black\" size=\"medium\">Capacity: %2d %%</span>", capacity);
+	sprintf(str,"<span size=\"medium\">Capacity: %2d %%</span>", capacity);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel3), str);
-	sprintf(str,"<span foreground=\"black\" size=\"medium\">%s</span>", timeStr);
+	sprintf(str,"<span size=\"medium\">%s</span>", timeStr);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel4), str);
 	
 	// display the remaining time in the title
@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
 {
 	GdkPixbuf *pixbuf, *new_pixbuf;
 	cairo_t *cr;
-	cairo_format_t format;        
+	cairo_format_t format;
 
 	gtk_init(&argc, &argv);
 		
@@ -280,25 +280,25 @@ int main(int argc, char *argv[])
 	
 	StatusLabel1 = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel1),
-	  "<span foreground=\"black\" size=\"x-large\">pi-top</span>");
+	  "<span size=\"x-large\">pi-top</span>");
 	gtk_label_set_justify(GTK_LABEL(StatusLabel1), GTK_JUSTIFY_LEFT);
 	gtk_fixed_put(GTK_FIXED(fixed), StatusLabel1, 64, 6);
 	
 	StatusLabel2 = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel2),
-	  "<span foreground=\"black\" size=\"medium\">Battery status:</span>");
+	  "<span size=\"medium\">Battery status:</span>");
 	gtk_label_set_justify(GTK_LABEL(StatusLabel2), GTK_JUSTIFY_LEFT);
 	gtk_fixed_put(GTK_FIXED(fixed), StatusLabel2, 8, 16 + TEXT_OFFSET);
 	
 	StatusLabel3 = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel3),
-	  "<span foreground=\"black\" size=\"medium\">Capacity:</span>");
+	  "<span size=\"medium\">Capacity:</span>");
 	gtk_label_set_justify(GTK_LABEL(StatusLabel3), GTK_JUSTIFY_LEFT);
 	gtk_fixed_put(GTK_FIXED(fixed), StatusLabel3, 8, 16 + 2 * TEXT_OFFSET);
 	
 	StatusLabel4 = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel4),
-	  "<span foreground=\"black\" size=\"medium\">Time:</span>");
+	  "<span size=\"medium\">Time:</span>");
 	gtk_label_set_justify(GTK_LABEL(StatusLabel4), GTK_JUSTIFY_LEFT);
 	gtk_fixed_put(GTK_FIXED(fixed), StatusLabel4, 8, 16 + 3 * TEXT_OFFSET);
 	
