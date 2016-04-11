@@ -176,7 +176,7 @@ static gboolean timer_event(GtkWidget *widget)
 	cairo_fill (cr);
 	if (w < 23) {
 		cairo_set_source_rgb (cr, 1, 1, 1);
-		cairo_rectangle (cr, 6 + w, 4, 23 - w, 12);
+		cairo_rectangle (cr, 5 + w, 4, 24 - w, 12);
 		cairo_fill (cr);
 	}
 	

@@ -21,9 +21,11 @@ To install:
 
   5. cd pi-top-battery-status-master
 
-  6. ./install
+  6. chmod +x ./install
 
-  7. Reboot your pi
+  7. ./install
+
+  8. Reboot your pi
 
 If you want to recompile the program, you need to install
 
