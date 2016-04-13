@@ -213,6 +213,14 @@ static gboolean timer_event(GtkWidget *widget)
 	// display the remaining time in the title
 	gtk_window_set_title(GTK_WINDOW(MainWindow), shortTimeStr);
 	
+	if ((capacity > 0) && (capacity <= 10) && (strcmp(sstatus,"charging"))) {
+		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(MainWindow),
+			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_CLOSE, "Battery capacity low!", NULL, NULL);
+			gtk_dialog_run (GTK_DIALOG (dialog));
+			gtk_widget_destroy (dialog);
+	}
+	
 	return TRUE;
 }
 
