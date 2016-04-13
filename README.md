@@ -10,7 +10,7 @@ Make sure that i2c is enabled in raspi-config.
 
 To install:
 
-  1. Download the depository to your computer using the "download zip" button
+  1. Download the repository to your pi-top using the "download zip" button
 
   2. Using the file manager, go to your download folder,
  right click on "pi-top-battery-status-master.zip" and choose "Extract here"
