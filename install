@@ -1,5 +1,8 @@
 # check if the install script is run by the 'pi' user
-[ `whoami` != pi ] && echo "Please run this script as 'pi' user"; exit 1
+if [ `whoami` != pi ]; then
+        echo "Please run as 'pi' user"
+        exit 1
+fi
 
 # kill any running gtk_battery command so that it can be overwritten
 pkill gtk_battery
