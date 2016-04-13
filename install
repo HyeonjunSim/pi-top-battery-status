@@ -1,10 +1,10 @@
 # check if the install script is run by the 'pi' user
 [ `whoami` != pi ] && echo "Please run this script as 'pi' user"; exit 1
 
-# kill any running gtk_battery command so that it can be verwritten
+# kill any running gtk_battery command so that it can be overwritten
 pkill gtk_battery
 
-# create b directory /home/pi, if it does ot exist
+# create b directory /home/pi, if it does not exist
 [ ! -d /home/pi/bin  ] && mkdir /home/pi/bin
 
 #make sure that files are executable
