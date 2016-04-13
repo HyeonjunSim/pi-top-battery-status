@@ -47,6 +47,8 @@ static gint height;
 static GtkWidget *MainWindow;
 static GtkWidget *StatusLabel1, *StatusLabel2, *StatusLabel3, *StatusLabel4;
 
+static int lowBattery;
+
 int i2cget(char *command, char *answer)
 {
 	FILE *fp;
@@ -213,12 +215,16 @@ static gboolean timer_event(GtkWidget *widget)
 	// display the remaining time in the title
 	gtk_window_set_title(GTK_WINDOW(MainWindow), shortTimeStr);
 	
-	if ((capacity > 0) && (capacity <= 10) && (strcmp(sstatus,"charging"))) {
+	if ((capacity > 0) && (capacity <= lowBattery) && (strcmp(sstatus,"charging"))) {
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(MainWindow),
 			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE, "Battery capacity low!", NULL, NULL);
+			GTK_BUTTONS_CLOSE, "Battery capacity low (Automatic shutdown below 10%)", NULL, NULL);
 			gtk_dialog_run (GTK_DIALOG (dialog));
 			gtk_widget_destroy (dialog);
+			if (lowBattery > 10)
+				lowBattery -= 2;
+			else
+				system("sudo shutdown -h now");
 	}
 	
 	return TRUE;
@@ -234,9 +240,11 @@ int main(int argc, char *argv[])
 	GdkPixbuf *pixbuf, *new_pixbuf;
 	cairo_t *cr;
 	cairo_format_t format;
+	
+	lowBattery = 20;
 
 	gtk_init(&argc, &argv);
-		
+	
 	MainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);         // Create the main windows
 
 	// Define main window event handlers  
