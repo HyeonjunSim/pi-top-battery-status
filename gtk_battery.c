@@ -41,6 +41,9 @@
 
 #define GRAY_LEVEL      0.93
 
+#define LOW_BATTERY_WARNING   10     // Warning if capacity <= this value 
+#define SHUTDOWN_CAPACITY      5     // Automatic shutdown if capacity is <= this value
+
 static cairo_surface_t *surface;
 static gint width;
 static gint height;
@@ -216,16 +219,45 @@ static gboolean timer_event(GtkWidget *widget)
 	gtk_window_set_title(GTK_WINDOW(MainWindow), shortTimeStr);
 	
 	if ((capacity > 0) && (capacity <= lowBattery) && (strcmp(sstatus,"charging"))) {
+
+		if (capacity <= SHUTDOWN_CAPACITY)
+			sprintf(str,
+				"Battery capacity low! Automatic shutdown will happen in 1 minute!");
+		else
+			sprintf(str, 
+				"Battery capacity low! Automatic shutdown will happen at %d percent!",
+				SHUTDOWN_CAPACITY);
+		
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(MainWindow),
-			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE, "Battery capacity low (Automatic shutdown below 10%)", NULL, NULL);
-			gtk_dialog_run (GTK_DIALOG (dialog));
-			gtk_widget_destroy (dialog);
-			if (lowBattery > 10)
-				lowBattery -= 2;
-			else
-				system("sudo shutdown -h now");
+			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, str);
+				
+		// open as non modal window
+		g_signal_connect_swapped (dialog, "response",
+			G_CALLBACK (gtk_widget_destroy), dialog);
+		gtk_widget_show_all(dialog);
+		
+		if (capacity <= SHUTDOWN_CAPACITY) {
+			system("sudo shutdown -h 1 &");
+			return FALSE;        // no further checks, system will shut down anyway
+		}
+		
+		// reduce warning level for next warning
+		if (lowBattery > SHUTDOWN_CAPACITY)
+			lowBattery -= 2;
+			
+		// avoid multiple warnings if battery is already low
+		if (lowBattery > (capacity - 1))
+			lowBattery = capacity - 1;
+			
+		// in any case, warn if capacity is below shutdown level
+		if (lowBattery < SHUTDOWN_CAPACITY)
+			  lowBattery = SHUTDOWN_CAPACITY;
 	}
+	
+	
+	// initialize warning again, if battery is charging
+	if (strcmp(sstatus,"charging") == 0)
+			lowBattery = LOW_BATTERY_WARNING;
 	
 	return TRUE;
 }
@@ -241,7 +273,7 @@ int main(int argc, char *argv[])
 	cairo_t *cr;
 	cairo_format_t format;
 	
-	lowBattery = 20;
+	lowBattery = LOW_BATTERY_WARNING;
 
 	gtk_init(&argc, &argv);
 	
