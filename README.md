@@ -19,16 +19,18 @@ To install:
   ./install
 ```
   4. Reboot your pi
-```
+
 If you want to recompile the program, you need to install
 ```
   sudo apt-get install libgtk-3-dev
 ```
+
 You can test the compilation with
 ```
   touch gtk_battery.c
   make
 ```
+
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
   
 Please help to improve this program by reporting any problems or suggestions to
