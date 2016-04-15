@@ -38,5 +38,5 @@ You can test the compilation with
 
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
   
-Please help to improve this program by by opening an issue on this repository
-if you any problems or suggestions.
+Please help to improve this program by opening an issue on this repository
+if you have any problem or suggestion.
