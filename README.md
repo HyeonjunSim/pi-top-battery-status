@@ -1,8 +1,9 @@
 # pi-top-battery-status
 
-- Displays the battery status of the pi-top battery (a laptop based on the raspberry pi).
-- Gives a warning if capacity is less or equal to 10%.
-- Shuts system down if capacity is less or equal to 5%, even if user pi does not respond to warnings. 
+- Displays the battery status of the pi-top battery
+(a laptop based on the raspberry pi, see http://pi-top.com)
+- Gives a warning if capacity is less or equal to 10%
+- Shuts system down if capacity is less or equal to 5%, even if user pi does not respond to warnings 
 
 The battery status is displayed on the desktop pannel.
 **You must be user pi to install and use the program.**
@@ -38,5 +39,6 @@ You can test the compilation with
 
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
   
-Please help to improve this program by opening an issue on this repository
+Please help to improve this program by tweeting to
+**http://twitter.com/r_richarz** or opening an issue on this repository
 if you have any problem or suggestion.
