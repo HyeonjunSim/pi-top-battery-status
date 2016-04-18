@@ -5,6 +5,8 @@
 - Gives a warning if capacity is less or equal to 10%
 - Shuts system down if capacity is less or equal to 5%, even if user pi does not respond to warnings 
 
+![Alt text](screenshot.jpg?raw=true "battery charge")
+
 The battery status is displayed on the desktop pannel.
 **You must be user pi to install and use the program.**
 Make sure that i2c is enabled in raspi-config.  
