@@ -106,7 +106,7 @@ static gboolean timer_event(GtkWidget *widget)
 		printf("Cannot talk to battery pack\n");
 
 	// status
-	sstatus = "undefined";
+	sstatus = "unknown";
 	count = 0;  
 	while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x0a w 2>&1", answer)) && (count++ < MAX_COUNT));  
 	if (result == 0) {
@@ -114,15 +114,17 @@ static gboolean timer_event(GtkWidget *widget)
 		sscanf(answer, "%x", &status);
 		if (status > 32767)                   // status is signed 16 bit word
 		  status -= 65536;
-		// printf("status = %d\n", status);
+		printf("status = %d\n", status);
 		if ((status > -4000) && (status < 4000)) {
-			if (status <= 10)
+			if (status < 0)
 				sstatus = "discharging";
-			else
+			else if (status > 0)
 				sstatus = "charging";
+			else
+				sstatus = "external power";
 		}
 		else
-		  sstatus = "undefined";
+		  sstatus = "unknown";
 		// printf("Status = %s\n", sstatus);
 	}
 	else
@@ -130,19 +132,21 @@ static gboolean timer_event(GtkWidget *widget)
 		
 	// charging/discharging time
 	count = 0;
-	timeStr[0] = 0;
-	shortTimeStr[0] = 0;
+	sprintf(timeStr, " ");
+	sprintf(shortTimeStr, " ");
 	if (strcmp(sstatus,"charging") == 0) {
 		while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x13 w 2>&1", answer)) && (count++ < MAX_COUNT));
 		if (result == 0) {
 			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
 			sscanf(answer, "%x", &time);
+			if (time < 1)
+				time = 1;
 			if (time <= 90) {
-				sprintf(timeStr, "Estimated charging time = %d minutes\n", time);
+				sprintf(timeStr, "Estimated charging time: %d minutes\n", time);
 				sprintf(shortTimeStr, "%d min", time);
 			}
 			else {
-				sprintf(timeStr, "Estimated charging time = %.1f hours\n", (float)time / 60.0);  
+				sprintf(timeStr, "Estimated charging time: %.1f hours\n", (float)time / 60.0);  
 				sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
 			}
 		}  
@@ -155,11 +159,11 @@ static gboolean timer_event(GtkWidget *widget)
 			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
 			sscanf(answer, "%x", &time);
 			if (time <= 90) {
-				sprintf(timeStr, "Estimated life time = %d minutes\n", time);
+				sprintf(timeStr, "Estimated life time: %d minutes\n", time);
 				sprintf(shortTimeStr, "%d min", time);
 			}
 			else {
-				sprintf(timeStr, "Estimated life time = %.1f hours\n", (double)time / 60.0);  
+				sprintf(timeStr, "Estimated life time: %.1f hours\n", (double)time / 60.0);  
 				sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
 			}
 		}  
@@ -175,6 +179,8 @@ static gboolean timer_event(GtkWidget *widget)
 		cairo_set_source_rgb (cr, 1, 1, 0);
 	else if (capacity < 20)
 		cairo_set_source_rgb (cr, 1, 0, 0);
+	else if (strcmp(sstatus,"external power") == 0)
+	    cairo_set_source_rgb (cr, 0.5, 0.5, 0.7);
 	else
 		cairo_set_source_rgb (cr, 0, 1, 0);
 	cairo_rectangle (cr, 5, 4, w, 12);
