@@ -44,3 +44,10 @@ To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (re
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
 if you have any problem or suggestion.
+
+*Other programs to display the pi-top-battery:*
+
+- If you prefer to display the battery gauche on a Pimorini Unicorn hat
+https://shop.pimoroni.com/products/unicorn-hat
+instead of the desktop pannel, Jez Shed has written a python script, see
+https://github.com/JezShed/PiTop-Unicorn-Battery-Gauge
