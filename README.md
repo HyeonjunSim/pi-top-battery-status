@@ -7,7 +7,7 @@
 
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
-The battery status is displayed on the desktop pannel.
+The battery status is displayed on the desktop panel.
 **You must be user pi to install and use the program.**
 Make sure that i2c is enabled in raspi-config.  
 
@@ -59,5 +59,5 @@ repository is not affiliated with pi-top.
 
 - If you prefer to display the battery gauche on a Pimorini Unicorn hat
 https://shop.pimoroni.com/products/unicorn-hat
-instead of the desktop pannel, Jez Shed has written a python script, see
+instead of the desktop panel, Jez Shed has written a python script, see
 https://github.com/JezShed/PiTop-Unicorn-Battery-Gauge
