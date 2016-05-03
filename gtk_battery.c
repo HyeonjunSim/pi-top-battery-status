@@ -50,6 +50,7 @@ static gint width;
 static gint height;
 static GtkWidget *MainWindow;
 static GtkWidget *StatusLabel1, *StatusLabel2, *StatusLabel3, *StatusLabel4;
+static lastCapacity;
 
 static int lowBattery;
 
@@ -147,8 +148,11 @@ static gboolean timer_event(GtkWidget *widget)
 	}
 	else
 		printLogEntry("Cannot talk to battery pack", -1);
-		
-	printLogEntry(sstatus, capacity);
+	
+	if (capacity != lastCapacity) {	
+		printLogEntry(sstatus, capacity);
+		lastCapacity = capacity;
+	}
 		
 	// charging/discharging time
 	count = 0;
@@ -303,6 +307,8 @@ int main(int argc, char *argv[])
 	cairo_format_t format;
 	
 	lowBattery = LOW_BATTERY_WARNING;
+	
+	lastCapacity = 0;
 	
 	if (MAKELOG) {
 		logFile = fopen("/home/pi/batteryLog.txt","a");
