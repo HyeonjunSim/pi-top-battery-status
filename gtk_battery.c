@@ -41,6 +41,7 @@
 
 #define GRAY_LEVEL      0.93
 
+#define MAKELOG                1     // log file batteryLog in home directory (0 = no log file)
 #define LOW_BATTERY_WARNING   15     // Warning if capacity <= this value 
 #define SHUTDOWN_CAPACITY     10     // Automatic shutdown if capacity is <= this value
 
@@ -52,13 +53,31 @@ static GtkWidget *StatusLabel1, *StatusLabel2, *StatusLabel3, *StatusLabel4;
 
 static int lowBattery;
 
+FILE *logFile;
+
+void printLogEntry(const char *s, int i) {
+	time_t rawtime;
+	struct tm *timeinfo;
+	char timeString[80];
+	
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime(timeString, 80, "%D %R:%S", timeinfo);
+	// printf("%s:  %s %d\n", timeString, s, i);
+	if (i != -1)
+		fprintf(logFile,"%s - %s %d%%\n", timeString, s, i);
+	else
+		fprintf(logFile,"%s - %s\n", timeString, s);
+	fflush(logFile);
+}
+
 int i2cget(char *command, char *answer)
 {
 	FILE *fp;
 	
 	fp = popen(command, "r");
 	if (fp == NULL) {
-		printf("Failure to run i2cget\n");
+		printLogEntry("Failure to run i2cget", -1);
 		exit(1);
 	}
 	
@@ -100,10 +119,9 @@ static gboolean timer_event(GtkWidget *widget)
 	if (result == 0) {
 		// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
 		sscanf(answer, "%x", &capacity);
-		// printf("Capacity = %d%%\n", capacity);
 	}
 	else
-		printf("Cannot talk to battery pack\n");
+		printLogEntry("Cannot talk to battery pack", -1);
 
 	// status
 	sstatus = "unknown";
@@ -114,7 +132,7 @@ static gboolean timer_event(GtkWidget *widget)
 		sscanf(answer, "%x", &status);
 		if (status > 32767)                   // status is signed 16 bit word
 		  status -= 65536;
-		printf("status = %d\n", status);
+		// printf("status = %d\n", status);
 		if ((status > -4000) && (status < 4000)) {
 			if (status < 0)
 				sstatus = "discharging";
@@ -128,7 +146,9 @@ static gboolean timer_event(GtkWidget *widget)
 		// printf("Status = %s\n", sstatus);
 	}
 	else
-		printf("Cannot talk to battery pack\n");
+		printLogEntry("Cannot talk to battery pack", -1);
+		
+	printLogEntry(sstatus, capacity);
 		
 	// charging/discharging time
 	count = 0;
@@ -151,7 +171,7 @@ static gboolean timer_event(GtkWidget *widget)
 			}
 		}  
 		else
-			printf("Cannot talk to battery pack\n");
+			printLogEntry("Cannot talk to battery pack", -1);
 	}
 	else if (strcmp(sstatus,"discharging") == 0) {
 		while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x12 w 2>&1", answer)) && (count++ < MAX_COUNT));
@@ -168,7 +188,7 @@ static gboolean timer_event(GtkWidget *widget)
 			}
 		}  
 		else
-			printf("Cannot talk to battery pack\n");
+			printLogEntry("Cannot talk to battery pack", -1);
 	}
 	
 	cr = cairo_create (surface);
@@ -243,6 +263,9 @@ static gboolean timer_event(GtkWidget *widget)
 		gtk_widget_show_all(dialog);
 		
 		if (capacity <= SHUTDOWN_CAPACITY) {
+			printLogEntry("Shutdown, capacity =", capacity);
+			if (MAKELOG)
+				fclose(logFile);
 			system("sudo shutdown -h 1 &");
 			return FALSE;        // no further checks, system will shut down anyway
 		}
@@ -280,6 +303,13 @@ int main(int argc, char *argv[])
 	cairo_format_t format;
 	
 	lowBattery = LOW_BATTERY_WARNING;
+	
+	if (MAKELOG) {
+		logFile = fopen("/home/pi/batteryLog.txt","a");
+		printLogEntry("gtk_battery started", -1);
+	}
+	else
+		logFile = stdout;
 
 	gtk_init(&argc, &argv);
 	
@@ -362,6 +392,9 @@ int main(int argc, char *argv[])
 	timer_event(MainWindow);
 			
 	gtk_main();
+	
+	if (MAKELOG)
+	  fclose(logFile);
 	
 	return 0;
 }

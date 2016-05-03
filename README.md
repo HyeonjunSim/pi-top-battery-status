@@ -39,6 +39,10 @@ You can test the compilation with
   make
 ```
 
+If you want to change the behaviour of gtk_battery 
+(no log file, other warning and shutdown capacity limits),
+see line 44 - 46 in gtk_battery.c
+
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
   
 Please help to improve this program by tweeting to
