@@ -41,8 +41,8 @@
 
 #define GRAY_LEVEL      0.93
 
-#define LOW_BATTERY_WARNING   10     // Warning if capacity <= this value 
-#define SHUTDOWN_CAPACITY      5     // Automatic shutdown if capacity is <= this value
+#define LOW_BATTERY_WARNING   15     // Warning if capacity <= this value 
+#define SHUTDOWN_CAPACITY     10     // Automatic shutdown if capacity is <= this value
 
 static cairo_surface_t *surface;
 static gint width;

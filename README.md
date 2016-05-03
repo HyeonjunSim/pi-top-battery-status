@@ -2,8 +2,8 @@
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
-- Gives a warning if capacity is less or equal to 10%
-- Shuts system down if capacity is less or equal to 5%, even if user pi does not respond to warnings 
+- Gives a warning if capacity is less or equal to 15%
+- Shuts system down if capacity is less or equal to 10%, even if user pi does not respond to warnings 
 
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
