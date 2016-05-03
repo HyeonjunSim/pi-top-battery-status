@@ -49,6 +49,12 @@ Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
 if you have any problem or suggestion.
 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details. The owner of this
+repository is not affiliated with pi-top.
+
 *Other programs to display the pi-top-battery:*
 
 - If you prefer to display the battery gauche on a Pimorini Unicorn hat
