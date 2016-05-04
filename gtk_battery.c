@@ -121,8 +121,8 @@ static gboolean timer_event(GtkWidget *widget)
 		// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
 		sscanf(answer, "%x", &capacity);
 	}
-	else
-		printLogEntry("Cannot talk to battery pack", -1);
+	// else
+	// 	printLogEntry("Cannot talk to battery pack", -1);
 
 	// status
 	sstatus = "unknown";
@@ -146,8 +146,8 @@ static gboolean timer_event(GtkWidget *widget)
 		  sstatus = "unknown";
 		// printf("Status = %s\n", sstatus);
 	}
-	else
-		printLogEntry("Cannot talk to battery pack", -1);
+	// else
+	// 	printLogEntry("Cannot talk to battery pack", -1);
 	
 	if (capacity != lastCapacity) {	
 		printLogEntry(sstatus, capacity);
@@ -191,8 +191,8 @@ static gboolean timer_event(GtkWidget *widget)
 				sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
 			}
 		}  
-		else
-			printLogEntry("Cannot talk to battery pack", -1);
+		// else
+		//	printLogEntry("Cannot talk to battery pack", -1);
 	}
 	
 	cr = cairo_create (surface);
