@@ -22,6 +22,8 @@
  * 
  * 
  */
+ 
+#define VERSION			"gtk_battery version 1.0"
 
 #include <cairo.h>
 #include <gtk/gtk.h>
@@ -174,8 +176,8 @@ static gboolean timer_event(GtkWidget *widget)
 				sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
 			}
 		}  
-		else
-			printLogEntry("Cannot talk to battery pack", -1);
+		// else
+		// 	printLogEntry("Cannot talk to battery pack", -1);
 	}
 	else if (strcmp(sstatus,"discharging") == 0) {
 		while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x12 w 2>&1", answer)) && (count++ < MAX_COUNT));
@@ -312,7 +314,7 @@ int main(int argc, char *argv[])
 	
 	if (MAKELOG) {
 		logFile = fopen("/home/pi/batteryLog.txt","a");
-		printLogEntry("gtk_battery started", -1);
+		printLogEntry(VERSION, -1);
 	}
 	else
 		logFile = stdout;
@@ -323,7 +325,7 @@ int main(int argc, char *argv[])
 
 	// Define main window event handlers  
 	gtk_widget_add_events(MainWindow, GDK_BUTTON_PRESS_MASK);
-	//g_signal_connect(MainWindow, "destroy", G_CALLBACK(gtk_main_quit), NULL); 
+	// g_signal_connect(MainWindow, "destroy", G_CALLBACK(gtk_main_quit), NULL); 
 	g_signal_connect(MainWindow, "delete_event", G_CALLBACK(gtk_window_iconify), NULL);
 	g_signal_connect(MainWindow, "button-press-event", G_CALLBACK(iconify), NULL); 
  
@@ -399,8 +401,10 @@ int main(int argc, char *argv[])
 			
 	gtk_main();
 	
-	if (MAKELOG)
+	if (MAKELOG) {
+	  printLogEntry("gtk_battery window stopped, capacity = ", lastCapacity);
 	  fclose(logFile);
+	}
 	
 	return 0;
 }
