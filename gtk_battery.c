@@ -23,7 +23,7 @@
  * 
  */
  
-#define VERSION			"gtk_battery version 1.0"
+#define VERSION			"gtk_battery version 1.0a"
 
 #include <cairo.h>
 #include <gtk/gtk.h>
@@ -127,6 +127,8 @@ static gboolean timer_event(GtkWidget *widget)
 	// 	printLogEntry("Cannot talk to battery pack", -1);
 
 	// status
+	if (capacity > 100)
+	  capacity = 0;              // read capacity was not successfull
 	sstatus = "unknown";
 	count = 0;  
 	while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x0a w 2>&1", answer)) && (count++ < MAX_COUNT));  
