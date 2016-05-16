@@ -1,4 +1,4 @@
-# pi-top-battery-status (version 1.0a)
+# pi-top-battery-status (version 1.1)
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
@@ -57,6 +57,7 @@ Release history:
 
 - Version 1.0: First stable release
 - Version 1.0a: Fixed a minor bug, which could show a battery charge > 100% under rare circumstances
+- Version 1.1: Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
 
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
