@@ -1,4 +1,4 @@
-# pi-top-battery-status (version 1.1)
+# pi-top-battery-status (version 1.1a)
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
@@ -49,15 +49,15 @@ You can test the compilation with
 
 If you want to change the behaviour of gtk_battery 
 (no log file, other warning and shutdown capacity limits),
-see line 44 - 46 in gtk_battery.c
+see line 47 - 49 in gtk_battery.c
 
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
 
 Release history:
-
 - Version 1.0: First stable release
 - Version 1.0a: Fixed a minor bug, which could show a battery charge > 100% under rare circumstances
 - Version 1.1: Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
+- Version 1.1a: i2c reliablity in log file, improved checking for i2c failures
 
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository

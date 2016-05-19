@@ -23,7 +23,7 @@
  * 
  */
  
-#define VERSION			"gtk_battery version 1.1"
+#define VERSION			"gtk_battery version 1.1a"
 
 #include <cairo.h>
 #include <gtk/gtk.h>
@@ -55,6 +55,7 @@ GtkWidget *MainWindow;
 GtkWidget *StatusLabel1, *StatusLabel2, *StatusLabel3, *StatusLabel4;
 int lastCapacity;
 int shutdownCounter;
+int first;
 long stat_good, stat_total;
 
 static int lowBattery;
@@ -65,15 +66,27 @@ void printLogEntry(const char *s, int i) {
 	time_t rawtime;
 	struct tm *timeinfo;
 	char timeString[80];
+	int stat_percent;
 	
 	time(&rawtime);
 	timeinfo = localtime(&rawtime);
 	strftime(timeString, 80, "%D %R:%S", timeinfo);
 	// printf("%s:  %s %d\n", timeString, s, i);
-	if (i != -1)
-		fprintf(logFile,"%s - %s %d%%\n", timeString, s, i);
+	
+	if (stat_total > 0) {
+		stat_percent = 100 * stat_good / stat_total;
+		stat_good = 0;         // reset statistics
+		stat_total = 0;
+		}
 	else
-		fprintf(logFile,"%s - %s\n", timeString, s);
+		stat_percent = 100;
+	
+	if (i != -1)
+		fprintf(logFile,"%s - i2c success rate %d%% - %s %d%%\n",
+			timeString, stat_percent, s, i);
+	else
+		fprintf(logFile,"%s - %s\n",
+			timeString, s);
 	fflush(logFile);
 }
 
@@ -84,15 +97,14 @@ int i2cget(char *command, char *answer)
 	fp = popen(command, "r");
 	if (fp == NULL) {
 		printLogEntry("Failure to run i2cget", -1);
+		usleep(20000);
 		exit(1);
 	}
-	
+	usleep(20000);
 	if (fgets(answer, MAX_ANSWER_SIZE - 1, fp) != 0) {
 		pclose(fp);
 		if ((answer[0] != '0') || (answer[1] != 'x')) {  // if not a hex value
-			usleep(2000);
-			return 1;
-		
+			return 1;		
 		}
 		else
 			return 0;	   
@@ -127,8 +139,9 @@ static gboolean timer_event(GtkWidget *widget)
 		if (result == 0) {
 			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
 			sscanf(answer, "%x", &capacity);
-			if ((capacity > 100) || (capacity < 0))
+			if ((capacity > 100) || (capacity < 0)) {
 				capacity = -1;              // capacity out of limits
+			}
 			else
 			  stat_good++;
 		}
@@ -137,83 +150,86 @@ static gboolean timer_event(GtkWidget *widget)
 	// status
 	sstatus = "unknown";
 	count = 0;  
-	while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x0a w 2>&1", answer)) && (count++ < MAX_COUNT)) stat_total++;
-	stat_total++;  
-	if (result == 0) {
-		// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
-		sscanf(answer, "%x", &status);
-		if (status > 32767)                   // status is signed 16 bit word
-		  status -= 65536;
-		// printf("status = %d\n", status);
-		if ((status > -4000) && (status < 4000)) {
-			stat_good++;
-			if (status < 0)
-				sstatus = "discharging";
-			else if (status > 0)
-				sstatus = "charging";
-			else
-				sstatus = "external power";
+	while ((strcmp(sstatus, "unknown") == 0) && (count++ < MAX_COUNT)) {		
+		result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x0a w 2>&1", answer);
+		stat_total++;
+		if (result == 0) {
+			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
+			sscanf(answer, "%x", &status);
+			if (status > 32767)                   // status is signed 16 bit word
+				status -= 65536;
+			// printf("status = %d\n", status);
+			if ((status > -4000) && (status < 4000)) {
+				stat_good++;
+				if (status < 0)
+					sstatus = "discharging";
+				else if (status > 0)
+					sstatus = "charging";
+				else
+					sstatus = "external power";
+			}
 		}
-		else
-		  sstatus = "unknown";
-		// printf("Status = %s\n", sstatus);
 	}
-	// else
-	// 	printLogEntry("Cannot talk to battery pack", -1);
-	
-	if (capacity != lastCapacity) {	
-		printLogEntry(sstatus, capacity);
-		lastCapacity = capacity;
-	}
-	
-	// printf("i2c statistics: stat_good = %d, stat_total = %d\n", stat_good, stat_total);
 		
 	// charging/discharging time
 	count = 0;
+	time = - 1;
 	sprintf(timeStr, " ");
 	sprintf(shortTimeStr, " ");
 	if (strcmp(sstatus,"charging") == 0) {
-		while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x13 w 2>&1", answer)) && (count++ < MAX_COUNT)) stat_total++;
-		stat_total++;
-		if (result == 0) {
-			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
-			sscanf(answer, "%x", &time);
-			if (time < 1)
-				time = 1;
-			if (time > 960)
-				time = 960;
-			if (time <= 90) {
-				sprintf(timeStr, "Estimated charging time: %d minutes\n", time);
-				sprintf(shortTimeStr, "%d min", time);
+		while ((time < 0) && (count++ < MAX_COUNT)) {
+			result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x13 w 2>&1", answer);
+			stat_total++;
+			// if (count > 1) printf("charging time: count = %d, answer = %s\n", count, answer);
+			if (result == 0) {	
+				sscanf(answer, "%x", &time);
+				if ((time < 1) || (time > 999)) {
+					time = -1;                              
+				}
+				if (time > 0) {
+					if (time <= 90) {
+						sprintf(timeStr, "Estimated charging time: %d minutes\n", time);
+						sprintf(shortTimeStr, "%d min", time);
+					}
+					else {
+						sprintf(timeStr, "Estimated charging time: %.1f hours\n", (float)time / 60.0);  
+						sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
+					}
+					stat_good++;
+				}
 			}
-			else {
-				sprintf(timeStr, "Estimated charging time: %.1f hours\n", (float)time / 60.0);  
-				sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
-			}
-			stat_good++;
-		}  
-		// else
-		// 	printLogEntry("Cannot talk to battery pack", -1);
+		}
 	}
 	else if (strcmp(sstatus,"discharging") == 0) {
-		while ((result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x12 w 2>&1", answer)) && (count++ < MAX_COUNT)) stat_total++;
-		stat_total++;
-		if (result == 0) {
-			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
-			sscanf(answer, "%x", &time);
-			if (time <= 90) {
-				sprintf(timeStr, "Estimated life time: %d minutes\n", time);
-				sprintf(shortTimeStr, "%d min", time);
+		while ((time < 0) && (count++ < MAX_COUNT)) {
+			result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x12 w 2>&1", answer);
+			stat_total++;
+			// if (count > 1) printf("discharging time: count = %d, answer = %s\n", count, answer);	
+			if (result == 0) {
+				sscanf(answer, "%x", &time);
+				if ((time < 1) || (time > 960)) {
+					time = -1;
+				}
+				if (time > 0) {
+					if (time <= 90) {
+						sprintf(timeStr, "Estimated life time: %d minutes\n", time);
+						sprintf(shortTimeStr, "%d min", time);
+					}
+					else {
+						sprintf(timeStr, "Estimated life time: %.1f hours\n", (double)time / 60.0);  
+						sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
+					}
+					stat_good++;
+				}
 			}
-			else {
-				sprintf(timeStr, "Estimated life time: %.1f hours\n", (double)time / 60.0);  
-				sprintf(shortTimeStr, "%.1f hours", (float)time / 60.0);
-			}
-			stat_good++;
 		}  
-		// else
-		//	printLogEntry("Cannot talk to battery pack", -1);
 	}
+	if (capacity != lastCapacity) {	
+		printLogEntry(sstatus, capacity);
+		lastCapacity = capacity;
+	}	
+//	printf("i2c statistics: stat_good = %d, stat_total = %d, percent good %d%%\n", 
+//		stat_good, stat_total, 100 * stat_good / stat_total);
 	
 	cr = cairo_create (surface);
 	
@@ -346,6 +362,7 @@ int main(int argc, char *argv[])
 	shutdownCounter = 0;
 	stat_good = 0;
 	stat_total = 0;
+	first = 1;
 	
 	if (MAKELOG) {
 		logFile = fopen("/home/pi/batteryLog.txt","a");
@@ -431,6 +448,7 @@ int main(int argc, char *argv[])
 	
 	// display the window
 	gtk_widget_show_all(MainWindow);
+	
 	// Call the timer function because we don't want to wait for the first time period triggered call
 	timer_event(MainWindow);
 	
