@@ -23,17 +23,18 @@
  * 
  */
  
-#define VERSION			"gtk_battery version 1.1a"
+#define VERSION			"gtk_battery version 1.2"
 
-#include <cairo.h>
-#include <gtk/gtk.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <time.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <cairo.h>
+#include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <wiringPiI2C.h>
 
 #define MAX_ANSWER_SIZE 64                     // Maximum size of answer string
 #define MAX_COUNT       20                     // Maximum number of trials
@@ -61,6 +62,8 @@ long stat_good, stat_total;
 static int lowBattery;
 
 FILE *logFile;
+
+int i2c_handle;
 
 void printLogEntry(const char *s, int i) {
 	time_t rawtime;
@@ -90,28 +93,14 @@ void printLogEntry(const char *s, int i) {
 	fflush(logFile);
 }
 
-int i2cget(char *command, char *answer)
+int i2cget(int address, int *data)
 {
-	FILE *fp;
-	
-	fp = popen(command, "r");
-	if (fp == NULL) {
-		printLogEntry("Failure to run i2cget", -1);
-		usleep(20000);
-		exit(1);
-	}
-	usleep(20000);
-	if (fgets(answer, MAX_ANSWER_SIZE - 1, fp) != 0) {
-		pclose(fp);
-		if ((answer[0] != '0') || (answer[1] != 'x')) {  // if not a hex value
-			return 1;		
-		}
-		else
-			return 0;	   
-	}
+	int res = wiringPiI2CReadReg16(i2c_handle, address);
+	if (res < 0)
+		return -1;
 	else {
-		pclose(fp);
-		return 1;
+		*data = res;
+		return 0;
 	}
 }
 
@@ -124,7 +113,6 @@ static gboolean timer_event(GtkWidget *widget)
 	char timeStr[255];
 	char shortTimeStr[32];
 	
-	char answer[MAX_ANSWER_SIZE];
 	int capacity, status;
 	int count, result;
 	char *sstatus;
@@ -134,11 +122,10 @@ static gboolean timer_event(GtkWidget *widget)
 	count = 0;
 	capacity = -1;  
 	while ((capacity  <  0) && (count++ < MAX_COUNT)) {
-		result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x0d w 2>&1", answer);
+		result = i2cget(0x0d, &capacity);
 		stat_total++;
 		if (result == 0) {
-			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
-			sscanf(answer, "%x", &capacity);
+			// if (count > 1) printf("count = %d, answer = %d\n", count, capacity);	
 			if ((capacity > 100) || (capacity < 0)) {
 				capacity = -1;              // capacity out of limits
 			}
@@ -151,11 +138,10 @@ static gboolean timer_event(GtkWidget *widget)
 	sstatus = "unknown";
 	count = 0;  
 	while ((strcmp(sstatus, "unknown") == 0) && (count++ < MAX_COUNT)) {		
-		result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x0a w 2>&1", answer);
+		result = i2cget(0x0a, &status);
 		stat_total++;
 		if (result == 0) {
-			// if (count > 1) printf("count = %d, answer = %s\n", count, answer);	
-			sscanf(answer, "%x", &status);
+			// if (count > 1) printf("count = %d, answer = %d\n", count, status);	
 			if (status > 32767)                   // status is signed 16 bit word
 				status -= 65536;
 			// printf("status = %d\n", status);
@@ -178,11 +164,10 @@ static gboolean timer_event(GtkWidget *widget)
 	sprintf(shortTimeStr, " ");
 	if (strcmp(sstatus,"charging") == 0) {
 		while ((time < 0) && (count++ < MAX_COUNT)) {
-			result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x13 w 2>&1", answer);
+			result = i2cget(0x13, &time);
 			stat_total++;
-			// if (count > 1) printf("charging time: count = %d, answer = %s\n", count, answer);
+			// if (count > 1) printf("charging time: count = %d, answer = %s\n", count, time);
 			if (result == 0) {	
-				sscanf(answer, "%x", &time);
 				if ((time < 1) || (time > 999)) {
 					time = -1;                              
 				}
@@ -202,11 +187,10 @@ static gboolean timer_event(GtkWidget *widget)
 	}
 	else if (strcmp(sstatus,"discharging") == 0) {
 		while ((time < 0) && (count++ < MAX_COUNT)) {
-			result = i2cget("/usr/sbin/i2cget -y 1 0x0b 0x12 w 2>&1", answer);
+			result = i2cget(0x12, &time);
 			stat_total++;
-			// if (count > 1) printf("discharging time: count = %d, answer = %s\n", count, answer);	
+			// if (count > 1) printf("discharging time: count = %d, answer = %d\n", count, time);	
 			if (result == 0) {
-				sscanf(answer, "%x", &time);
 				if ((time < 1) || (time > 960)) {
 					time = -1;
 				}
@@ -295,7 +279,7 @@ static gboolean timer_event(GtkWidget *widget)
 	if (capacity > SHUTDOWN_CAPACITY)
 	  shutdownCounter = 0;
 	
-	if ((capacity > 0) && (capacity <= lowBattery) && (strcmp(sstatus,"charging"))) {
+	if ((capacity > 0) && (capacity <= lowBattery) && (strcmp(sstatus,"discharging") == 0)) {
 
 		if (capacity <= SHUTDOWN_CAPACITY) {
 		    shutdownCounter++;
@@ -370,6 +354,12 @@ int main(int argc, char *argv[])
 	}
 	else
 		logFile = stdout;
+		
+	i2c_handle = wiringPiI2CSetup(0x0b);
+	if (i2c_handle < 0) {
+		printLogEntry("Cannot get handle for wiringPii2c\n", -1);
+		return 1;
+	}
 
 	gtk_init(&argc, &argv);
 	
@@ -395,8 +385,8 @@ int main(int argc, char *argv[])
 	char *iconPath = "/home/pi/bin/battery_icon.png";
 	pixbuf = gdk_pixbuf_new_from_file (iconPath, NULL);
 	if (pixbuf == NULL) {
-		printf("Cannot open %s\n", iconPath);
-		return(1);
+		printLogEntry("Cannot load icon (/home/pi/bin/battery_icon.png)\n", -1);
+		return 1;
 	}
 	format = (gdk_pixbuf_get_has_alpha (pixbuf)) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
 	width = gdk_pixbuf_get_width (pixbuf);

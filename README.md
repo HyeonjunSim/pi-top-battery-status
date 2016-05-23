@@ -1,4 +1,4 @@
-# pi-top-battery-status (version 1.1a)
+# pi-top-battery-status (version 1.2)
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
@@ -14,14 +14,19 @@ Make sure that i2c is enabled in raspi-config.
 
 To install:
 
-- Download the repository to your pi-top using the "download zip" button
+- Download the repository to your pi-top using the "Clone or download" button. If
+this button does not work in your browser, open a teminal and type
+```
+cd Downloads
+git clone git://github.com/rricharz/pi-top-battery-status
+```
 - Using the file manager, go to your download folder,
  right click on "pi-top-battery-status-master.zip" and choose "Extract here"
 - Open a console window and type the following commands
 
 ```
   cd Downloads
-  cd pi-top-battery-status-master
+  cd pi-top-battery-status-master       (or cd pi-top-battery-status)
   chmod +x ./install
   ./install
 ```
@@ -58,6 +63,7 @@ Release history:
 - Version 1.0a: Fixed a minor bug, which could show a battery charge > 100% under rare circumstances
 - Version 1.1: Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
 - Version 1.1a: i2c reliablity in log file, improved checking for i2c failures
+- Version 1.2: using direct i2c access rather than calling i2cget to reduce overhead, shutdown only if discharging at low capacity
 
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
