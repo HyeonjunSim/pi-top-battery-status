@@ -16,7 +16,7 @@ To install:
 
 - Download the repository to your pi-top:
 
-``
+```
   cd Downloads
   git clone git://github.com/rricharz/pi-top-battery-status
   cd pi-top-battery-status
