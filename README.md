@@ -14,22 +14,16 @@ Make sure that i2c is enabled in raspi-config.
 
 To install:
 
-- Download the repository to your pi-top using the "Clone or download" button. If
-this button does not work in your browser, open a teminal and type
-```
-cd Downloads
-git clone git://github.com/rricharz/pi-top-battery-status
-```
-- Using the file manager, go to your download folder,
- right click on "pi-top-battery-status-master.zip" and choose "Extract here"
-- Open a console window and type the following commands
+- Download the repository to your pi-top:
 
-```
+``
   cd Downloads
-  cd pi-top-battery-status-master       (or cd pi-top-battery-status)
+  git clone git://github.com/rricharz/pi-top-battery-status
+  cd pi-top-battery-status
   chmod +x ./install
   ./install
 ```
+
 - Reboot your pi
 
 If you are running standard raspian instead of pi-top-os, and you get a 0% battery level display,
