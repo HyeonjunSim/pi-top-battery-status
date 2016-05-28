@@ -27,11 +27,7 @@ To install:
 - Reboot your pi
 
 If you are running standard raspian instead of pi-top-os, and you get a 0% battery level display,
-you might have to turn i2c on in raspi-config and install i2c-tools with the command
-
-```
-  sudo apt-get install i2c-tools
-```
+you might have to turn i2c on in raspi-config
 
 If you want to recompile the program, you need to install
 
