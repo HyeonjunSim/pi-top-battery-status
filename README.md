@@ -1,10 +1,10 @@
-# pi-top-battery-status (version 1.2)
+# pi-top-battery-status (version 1.2a)
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
 - Displays the charging and discharging current in mA
 - Gives a warning if capacity is less or equal to 10%
-- Shuts system down if capacity is less or equal to 18%, even if user pi does not respond to warnings
+- Shuts system down if capacity is less or equal to 5%, even if user pi does not respond to warnings
 - Logs all activities in /home/pi/batteryLog.txt
 
 ![Alt text](screenshot.jpg?raw=true "battery charge")
@@ -15,12 +15,12 @@ Make sure that i2c is enabled in raspi-config.
 
 If the icon is clicked, a window is opened which displays the following information:
 
-![Alt text](screenshot2.jpg?raw=true "window")
+![Alt text](screenshot2.png?raw=true "window")
 
 By right-clicking on an empty space on the desktop panel and using the menu Panel settings
 the desktop can be configured to show only the icons of the running programs
 
-![Alt text](screenshot3.jpg?raw=true "pannel")
+![Alt text](screenshot3.png?raw=true "pannel")
 
 The display of the discharging current when running from battery can be used to get information
 about battery usage at different screen brightness settings, and with additional hardware.
