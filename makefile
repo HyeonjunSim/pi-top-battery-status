@@ -6,3 +6,4 @@ all: gtk_battery
 
 gtk_battery: gtk_battery.c
 	gcc -o gtk_battery gtk_battery.c $(LIBS) $(CFLAGS) -lwiringPi
+

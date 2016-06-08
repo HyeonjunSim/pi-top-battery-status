@@ -22,8 +22,8 @@
  * 
  * 
  */
- 
-#define VERSION			"gtk_battery version 1.2"
+
+#define VERSION			"S=1.2a"
 
 #include <time.h>
 #include <stdio.h>
@@ -38,22 +38,24 @@
 
 #define MAX_ANSWER_SIZE 64                     // Maximum size of answer string
 #define MAX_COUNT       20                     // Maximum number of trials
+#define SLEEP_TIME      500                    // time between two i2cget in microsec
 
 #define WINDOW_WIDTH    260
-#define WINDOW_HEIGHT   100
+#define WINDOW_HEIGHT   120
 #define TEXT_OFFSET      20
 
 #define GRAY_LEVEL      0.93
 
 #define MAKELOG                1     // log file batteryLog in home directory (0 = no log file)
-#define LOW_BATTERY_WARNING   15     // Warning if capacity <= this value 
-#define SHUTDOWN_CAPACITY     10     // Automatic shutdown if capacity is <= this value
+#define LOW_BATTERY_WARNING   10     // Warning if capacity <= this value 
+#define SHUTDOWN_CAPACITY     15     // Automatic shutdown if capacity is <= this value
 
 cairo_surface_t *surface;
 gint width;
 gint height;
 GtkWidget *MainWindow;
-GtkWidget *StatusLabel1, *StatusLabel2, *StatusLabel3, *StatusLabel4;
+GtkWidget *StatusLabel1, *StatusLabel2, *StatusLabel3, *StatusLabel4, *StatusLabel5;
+guint global_timeout_ref;
 int lastCapacity;
 int shutdownCounter;
 int first;
@@ -65,7 +67,29 @@ FILE *logFile;
 
 int i2c_handle;
 
-void printLogEntry(const char *s, int i) {
+void printReg(int reg, char* unit, int min, int max)
+{
+	int count = 0;
+	int value = 0;  
+	while ((value == 0) && (count++ < MAX_COUNT)) {
+		int result = i2cget(reg, &value);
+		stat_total++;
+		if (result == 0) {
+			if ((value > max) || (value < min))
+				value = 0;              // out of limits	
+			else
+				stat_good++;
+		}
+		usleep(SLEEP_TIME);
+	}
+	if (value == 0) {
+		fprintf(logFile, " n/a %s", unit);
+	}
+	else
+		fprintf(logFile, "%4d%s", value, unit);
+}
+
+void printLogEntry(int capacity, int current) {
 	time_t rawtime;
 	struct tm *timeinfo;
 	char timeString[80];
@@ -74,6 +98,7 @@ void printLogEntry(const char *s, int i) {
 	time(&rawtime);
 	timeinfo = localtime(&rawtime);
 	strftime(timeString, 80, "%D %R:%S", timeinfo);
+	fprintf(logFile, timeString);
 	// printf("%s:  %s %d\n", timeString, s, i);
 	
 	if (stat_total > 0) {
@@ -84,12 +109,27 @@ void printLogEntry(const char *s, int i) {
 	else
 		stat_percent = 100;
 	
-	if (i != -1)
-		fprintf(logFile,"%s - i2c success rate %d%% - %s %d%%\n",
-			timeString, stat_percent, s, i);
+	fprintf(logFile," - %s, I2C=%3d%%", VERSION, stat_percent);
+	
+	if (capacity)
+		fprintf(logFile, ", C=%3d%%/", capacity);
 	else
-		fprintf(logFile,"%s - %s\n",
-			timeString, s);
+		fprintf(logFile, ", C=  n/a/");
+	printReg(0x0F,"mAh", 0, 5000);
+		
+	if (current > -4000)
+		fprintf(logFile, ", A=%4dmA", current);
+	else
+		fprintf(logFile, ", A=   n/a");
+		
+	fprintf(logFile, ", U=");
+
+	printReg(0x09,"mV (", 10000, 20000);
+	printReg(0x3F,"mV/", 2000, 5000);
+	printReg(0x3E,"mV/", 2000, 5000);
+	printReg(0x3D,"mV/", 2000, 5000);
+	printReg(0x3C,"mV)", 2000, 5000);
+	fprintf(logFile, "\n");
 	fflush(logFile);
 }
 
@@ -113,10 +153,12 @@ static gboolean timer_event(GtkWidget *widget)
 	char timeStr[255];
 	char shortTimeStr[32];
 	
-	int capacity, status;
+	int capacity, current;
 	int count, result;
 	char *sstatus;
 	int time;
+	
+	g_source_remove(global_timeout_ref);     // stop timer in case of tc_loop taking too long
 	
 	// capacity
 	count = 0;
@@ -132,29 +174,33 @@ static gboolean timer_event(GtkWidget *widget)
 			else
 			  stat_good++;
 		}
+		usleep(SLEEP_TIME);
 	}
 
-	// status
+	// current
 	sstatus = "unknown";
 	count = 0;  
 	while ((strcmp(sstatus, "unknown") == 0) && (count++ < MAX_COUNT)) {		
-		result = i2cget(0x0a, &status);
+		result = i2cget(0x0a, &current);
 		stat_total++;
 		if (result == 0) {
-			// if (count > 1) printf("count = %d, answer = %d\n", count, status);	
-			if (status > 32767)                   // status is signed 16 bit word
-				status -= 65536;
-			// printf("status = %d\n", status);
-			if ((status > -4000) && (status < 4000)) {
+			// if (count > 1) printf("count = %d, answer = %d\n", count, current);	
+			if (current > 32767)                   // status is signed 16 bit word
+				current -= 65536;
+			// printf("current = %d\n", current);
+			if ((current > -5000) && (current < 5000)) {
 				stat_good++;
-				if (status < 0)
+				if (current < 0)
 					sstatus = "discharging";
-				else if (status > 0)
+				else if (current > 0)
 					sstatus = "charging";
 				else
 					sstatus = "external power";
 			}
+			else
+				current = -32767;          // unknown
 		}
+		usleep(SLEEP_TIME);
 	}
 		
 	// charging/discharging time
@@ -183,6 +229,7 @@ static gboolean timer_event(GtkWidget *widget)
 					stat_good++;
 				}
 			}
+			usleep(SLEEP_TIME);
 		}
 	}
 	else if (strcmp(sstatus,"discharging") == 0) {
@@ -206,10 +253,11 @@ static gboolean timer_event(GtkWidget *widget)
 					stat_good++;
 				}
 			}
+			usleep(SLEEP_TIME);
 		}  
 	}
 	if (capacity != lastCapacity) {	
-		printLogEntry(sstatus, capacity);
+		printLogEntry(capacity, current);
 		lastCapacity = capacity;
 	}	
 //	printf("i2c statistics: stat_good = %d, stat_total = %d, percent good %d%%\n", 
@@ -224,7 +272,7 @@ static gboolean timer_event(GtkWidget *widget)
 	  w = (99 * capacity) / 400;
 	if (strcmp(sstatus,"charging") == 0)
 		cairo_set_source_rgb (cr, 1, 1, 0);
-	else if (capacity < 20)
+	else if (capacity < 10)
 		cairo_set_source_rgb (cr, 1, 0, 0);
 	else if (strcmp(sstatus,"external power") == 0)
 	    cairo_set_source_rgb (cr, 0.5, 0.5, 0.7);
@@ -240,7 +288,7 @@ static gboolean timer_event(GtkWidget *widget)
 	
 	// display the capacity figure
 	cairo_set_source_rgb (cr, GRAY_LEVEL, GRAY_LEVEL, GRAY_LEVEL);
-	cairo_rectangle (cr, 2, 20, 32, 15);
+	cairo_rectangle (cr, 2, 20, 34, 15);
 	cairo_fill (cr);   
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_select_font_face(cr, "Dosis", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
@@ -268,10 +316,15 @@ static gboolean timer_event(GtkWidget *widget)
 	if (capacity >= 0)
 	  sprintf(str,"<span size=\"medium\">Capacity: %2d %%</span>", capacity);
 	else
-	  sprintf(str,"<span size=\"medium\">Capacity: unknown</span>", capacity);
+	  sprintf(str,"<span size=\"medium\">Capacity: n/a</span>");
 	gtk_label_set_markup(GTK_LABEL(StatusLabel3), str);
 	sprintf(str,"<span size=\"medium\">%s</span>", timeStr);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel4), str);
+	if ((current >= -5000) && (current <= 5000))
+	  sprintf(str,"<span size=\"medium\">Current: %2d mA</span>", current);
+	else
+	  sprintf(str,"<span size=\"medium\">Current: n/a</span>", current);
+	gtk_label_set_markup(GTK_LABEL(StatusLabel5), str);
 	
 	// display the remaining time in the title
 	gtk_window_set_title(GTK_WINDOW(MainWindow), shortTimeStr);
@@ -301,7 +354,7 @@ static gboolean timer_event(GtkWidget *widget)
 		gtk_widget_show_all(dialog);
 		
 		if ((capacity <= SHUTDOWN_CAPACITY) && (shutdownCounter >= 20)) {
-			printLogEntry("Shutdown, capacity =", capacity);
+			printLogEntry(capacity, current);
 			if (MAKELOG)
 				fclose(logFile);
 			system("sudo shutdown -h now &");
@@ -325,6 +378,9 @@ static gboolean timer_event(GtkWidget *widget)
 	// initialize warning again, if battery is charging
 	if (strcmp(sstatus,"charging") == 0)
 			lowBattery = LOW_BATTERY_WARNING;
+	
+	// restart timer		
+	global_timeout_ref = g_timeout_add(5000, (GSourceFunc) timer_event, (gpointer) MainWindow);
 	
 	return TRUE;
 }
@@ -350,14 +406,13 @@ int main(int argc, char *argv[])
 	
 	if (MAKELOG) {
 		logFile = fopen("/home/pi/batteryLog.txt","a");
-		printLogEntry(VERSION, -1);
 	}
 	else
 		logFile = stdout;
 		
 	i2c_handle = wiringPiI2CSetup(0x0b);
 	if (i2c_handle < 0) {
-		printLogEntry("Cannot get handle for wiringPii2c\n", -1);
+		printf("Cannot get handle for wiringPii2c\n");
 		return 1;
 	}
 
@@ -385,7 +440,7 @@ int main(int argc, char *argv[])
 	char *iconPath = "/home/pi/bin/battery_icon.png";
 	pixbuf = gdk_pixbuf_new_from_file (iconPath, NULL);
 	if (pixbuf == NULL) {
-		printLogEntry("Cannot load icon (/home/pi/bin/battery_icon.png)\n", -1);
+		printf("Cannot load icon (/home/pi/bin/battery_icon.png)\n", -1);
 		return 1;
 	}
 	format = (gdk_pixbuf_get_has_alpha (pixbuf)) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
@@ -403,7 +458,7 @@ int main(int argc, char *argv[])
 	// Add timer event
 	// Register the timer and set time in mS.
 	// The timer_event() function is called repeatedly until it returns FALSE. 
-	g_timeout_add(5000, (GSourceFunc) timer_event, (gpointer) MainWindow);
+	global_timeout_ref = g_timeout_add(5000, (GSourceFunc) timer_event, (gpointer) MainWindow);
 	
 	// Create label in main window
 	GtkWidget *fixed;
@@ -436,6 +491,12 @@ int main(int argc, char *argv[])
 	gtk_label_set_justify(GTK_LABEL(StatusLabel4), GTK_JUSTIFY_LEFT);
 	gtk_fixed_put(GTK_FIXED(fixed), StatusLabel4, 8, 16 + 3 * TEXT_OFFSET);
 	
+	StatusLabel5 = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(StatusLabel5),
+	  "<span size=\"medium\">Time:</span>");
+	gtk_label_set_justify(GTK_LABEL(StatusLabel5), GTK_JUSTIFY_LEFT);
+	gtk_fixed_put(GTK_FIXED(fixed), StatusLabel5, 8, 16 + 4 * TEXT_OFFSET);
+
 	// display the window
 	gtk_widget_show_all(MainWindow);
 	
@@ -445,7 +506,6 @@ int main(int argc, char *argv[])
 	gtk_main();
 	
 	if (MAKELOG) {
-	  printLogEntry("gtk_battery window stopped, capacity = ", lastCapacity);
 	  fclose(logFile);
 	}
 	

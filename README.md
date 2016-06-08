@@ -2,15 +2,35 @@
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
-- Gives a warning if capacity is less or equal to 15%
-- Shuts system down if capacity is less or equal to 10%, even if user pi does not respond to warnings
+- Displays the charging and discharging current in mA
+- Gives a warning if capacity is less or equal to 10%
+- Shuts system down if capacity is less or equal to 18%, even if user pi does not respond to warnings
 - Logs all activities in /home/pi/batteryLog.txt
 
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
 The battery status is displayed on the desktop panel.
 **You must be user pi to install and use the program.**
-Make sure that i2c is enabled in raspi-config.  
+Make sure that i2c is enabled in raspi-config.
+
+If the icon is clicked, a window is opened which displays the following information:
+
+![Alt text](screenshot2.jpg?raw=true "window")
+
+By right-clicking on an empty space on the desktop panel and using the menu Panel settings
+the desktop can be configured to show only the icons of the running programs
+
+![Alt text](screenshot3.jpg?raw=true "pannel")
+
+The display of the discharging current when running from battery can be used to get information
+about battery usage at different screen brightness settings, and with additional hardware.
+
+The log file logs detailed information about the status and healt of the battery system:
+- battery capacity in mAh
+- charging and discharging current
+- Total voltage
+- Individual voltage of each of the 4 cells of the battery
+ 
 
 To install:
 
@@ -27,7 +47,7 @@ To install:
 - Reboot your pi
 
 If you are running standard raspian instead of pi-top-os, and you get a 0% battery level display,
-you might have to turn i2c on in raspi-config
+you might have to turn i2c on in Menu/Preferences/Raspberry Pi Configuration/Interfaces.
 
 If you want to recompile the program, you need to install
 
@@ -42,9 +62,8 @@ You can test the compilation with
   make
 ```
 
-If you want to change the behaviour of gtk_battery 
-(no log file, other warning and shutdown capacity limits),
-see line 47 - 49 in gtk_battery.c
+After compilation you need to install the program again. If you want to change the behaviour of gtk_battery 
+(no log file, other warning and shutdown capacity limits), see line 48 - 50 in gtk_battery.c
 
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
 
@@ -54,6 +73,7 @@ Release history:
 - Version 1.1: Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
 - Version 1.1a: i2c reliablity in log file, improved checking for i2c failures
 - Version 1.2: using direct i2c access rather than calling i2cget to reduce overhead, shutdown only if discharging at low capacity
+- Version 1.2a: current and other additional information added
 
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
