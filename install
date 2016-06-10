@@ -7,7 +7,7 @@ fi
 # kill any running gtk_battery command so that it can be overwritten
 pkill gtk_battery
 
-# create b directory /home/pi, if it does not exist
+# create bin directory in /home/pi, if it does not exist
 [ ! -d /home/pi/bin  ] && mkdir /home/pi/bin
 
 #make sure that files are executable
@@ -16,6 +16,12 @@ chmod +x gtk_battery
 #copy necessary files to /home/pi/bin
 cp battery_icon.png /home/pi/bin
 cp gtk_battery /home/pi/bin
+
+# create pi-top directory in /home/pi/.config/, if it does not exist
+[ ! -d /home/pi/.config/pi-top  ] && mkdir /home/pi/.config/pi-top
+
+#copy necessary file to /home/pi/.config/pi-top
+cp gtk_battery.txt /home/pi/.config/pi-top
 
 # add line to lxsession autostart, if it does not already exist
 if ! grep -q "gtk_battery" /home/pi/.config/lxsession/LXDE-pi/autostart

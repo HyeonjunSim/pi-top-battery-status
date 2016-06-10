@@ -23,7 +23,7 @@
  * 
  */
 
-#define VERSION			"S=1.2a"
+#define VERSION			"S=1.2b"
 
 #include <time.h>
 #include <stdio.h>
@@ -47,8 +47,8 @@
 #define GRAY_LEVEL      0.93
 
 #define MAKELOG                1     // log file batteryLog in home directory (0 = no log file)
-#define LOW_BATTERY_WARNING   10     // Warning if capacity <= this value 
-#define SHUTDOWN_CAPACITY      5     // Automatic shutdown if capacity is <= this value
+
+int redLevel, warningLevel, shutdownLevel;
 
 cairo_surface_t *surface;
 gint width;
@@ -214,7 +214,7 @@ static gboolean timer_event(GtkWidget *widget)
 			stat_total++;
 			// if (count > 1) printf("charging time: count = %d, answer = %s\n", count, time);
 			if (result == 0) {	
-				if ((time < 1) || (time > 999)) {
+				if ((time < 1) || (time >999)) {
 					time = -1;                              
 				}
 				if (time > 0) {
@@ -272,7 +272,7 @@ static gboolean timer_event(GtkWidget *widget)
 	  w = (99 * capacity) / 400;
 	if (strcmp(sstatus,"charging") == 0)
 		cairo_set_source_rgb (cr, 1, 1, 0);
-	else if (capacity < 10)
+	else if (capacity < redLevel)
 		cairo_set_source_rgb (cr, 1, 0, 0);
 	else if (strcmp(sstatus,"external power") == 0)
 	    cairo_set_source_rgb (cr, 0.5, 0.5, 0.7);
@@ -329,21 +329,26 @@ static gboolean timer_event(GtkWidget *widget)
 	// display the remaining time in the title
 	gtk_window_set_title(GTK_WINDOW(MainWindow), shortTimeStr);
 
-	if (capacity > SHUTDOWN_CAPACITY)
+	if (capacity > shutdownLevel)
 	  shutdownCounter = 0;
 	
 	if ((capacity > 0) && (capacity <= lowBattery) && (strcmp(sstatus,"discharging") == 0)) {
 
-		if (capacity <= SHUTDOWN_CAPACITY) {
+		if (capacity <= shutdownLevel) {
 		    shutdownCounter++;
 			sprintf(str,
 				"Battery capacity very low! To protect battery, automatic shutdown will happen in %d sec! (To abort shutdown: type 'pkill gtk_battery' in terminal window)",
 				120 - (5 * shutdownCounter));
+			fprintf(logFile,"%s\n",str);
+			fflush(logFile);
 			}
-		else
+		else {
 			sprintf(str, 
 				"Battery capacity low! Automatic shutdown will happen at %d percent",
-				SHUTDOWN_CAPACITY);
+				shutdownLevel);
+			fprintf(logFile,"%s\n",str);
+			fflush(logFile);
+		}
 		
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(MainWindow),
 			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, str);
@@ -353,7 +358,7 @@ static gboolean timer_event(GtkWidget *widget)
 			G_CALLBACK (gtk_widget_destroy), dialog);
 		gtk_widget_show_all(dialog);
 		
-		if ((capacity <= SHUTDOWN_CAPACITY) && (shutdownCounter >= 20)) {
+		if ((capacity <= shutdownLevel) && (shutdownCounter >= 20)) {
 			printLogEntry(capacity, current);
 			if (MAKELOG)
 				fclose(logFile);
@@ -362,22 +367,22 @@ static gboolean timer_event(GtkWidget *widget)
 		}
 		
 		// reduce warning level for next warning
-		if (lowBattery > SHUTDOWN_CAPACITY)
-			lowBattery -= 2;
+		if (lowBattery > shutdownLevel)
+			lowBattery -= 1;
 			
 		// avoid multiple warnings if battery is already low
 		if (lowBattery > (capacity - 1))
 			lowBattery = capacity - 1;
 			
 		// in any case, warn if capacity is below shutdown level
-		if (lowBattery < SHUTDOWN_CAPACITY)
-			  lowBattery = SHUTDOWN_CAPACITY;
+		if (lowBattery < shutdownLevel)
+			  lowBattery = shutdownLevel;
 	}
 	
 	
 	// initialize warning again, if battery is charging
 	if (strcmp(sstatus,"charging") == 0)
-			lowBattery = LOW_BATTERY_WARNING;
+			lowBattery = warningLevel;
 	
 	// restart timer		
 	global_timeout_ref = g_timeout_add(5000, (GSourceFunc) timer_event, (gpointer) MainWindow);
@@ -396,7 +401,7 @@ int main(int argc, char *argv[])
 	cairo_t *cr;
 	cairo_format_t format;
 	
-	lowBattery = LOW_BATTERY_WARNING;
+	lowBattery = warningLevel;
 	
 	lastCapacity = 0;
 	shutdownCounter = 0;
@@ -412,9 +417,33 @@ int main(int argc, char *argv[])
 		
 	i2c_handle = wiringPiI2CSetup(0x0b);
 	if (i2c_handle < 0) {
-		printf("Cannot get handle for wiringPii2c\n");
+		fprintf(logFile, "Cannot get handle for wiringPii2c\n");
 		return 1;
 	}
+	
+	FILE *confFile;
+	confFile = fopen("/home/pi/.config/pi-top/gtk_battery.txt","r");
+  	if (confFile < 0) {
+		fprintf(confFile,"Cannot open /home/pi/.config/pi-top/gtk_battery.txt\n");
+		return 1;
+	}
+	fscanf(confFile, "red=%d\n", &redLevel);
+	if (redLevel < 10) redLevel = 10;
+	if (redLevel > 50) redLevel = 50;
+	fscanf(confFile, "warning=%d\n", &warningLevel);
+	if (warningLevel < 8) warningLevel = 8;
+	if (warningLevel > 50) warningLevel = 50;
+ 	fscanf(confFile, "shutdown=d\n", &shutdownLevel);
+	if (shutdownLevel < 5) shutdownLevel = 5;
+	if (shutdownLevel > 20) shutdownLevel = 20;
+	if (warningLevel < shutdownLevel + 2) warningLevel = shutdownLevel + 2;
+	if (redLevel < warningLevel) redLevel = warningLevel;
+
+	fclose(confFile);
+  
+	printf("red=%d\n", redLevel);
+	printf("warning=%d\n", warningLevel);
+	printf("shutdown=%d\n", shutdownLevel);
 
 	gtk_init(&argc, &argv);
 	
@@ -440,7 +469,7 @@ int main(int argc, char *argv[])
 	char *iconPath = "/home/pi/bin/battery_icon.png";
 	pixbuf = gdk_pixbuf_new_from_file (iconPath, NULL);
 	if (pixbuf == NULL) {
-		printf("Cannot load icon (/home/pi/bin/battery_icon.png)\n", -1);
+		fprintf(logFile, "Cannot load icon (/home/pi/bin/battery_icon.png)\n", -1);
 		return 1;
 	}
 	format = (gdk_pixbuf_get_has_alpha (pixbuf)) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
