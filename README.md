@@ -64,8 +64,8 @@ You can test the compilation with
 
 After compilation you need to install the program again.
 
-The warning and shutdown levels can be adjusted within limits in /home/pi/.config/p-top/gtkbattery.txt.
-The values have have to be within the following limits: 10 <= red = 50, 8 <= warning <= 50, 5 <= shutdown <= 20
+The warning and shutdown levels can be adjusted in /home/pi/.config/pi-top/gtkbattery.txt.
+The values have to be within the following limits: 10 <= red = 50, 8 <= warning <= 50, 5 <= shutdown <= 20
 
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
 
