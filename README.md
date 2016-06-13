@@ -86,12 +86,15 @@ the pi-top-battery-pack. A summary of this project can be found in project.pdf i
 There is also a program called "battery" in this repository. If you are in the downloaded
 pi-top-battery-status directory, you can type
 ```
+pkill gtk_battery
 sudo ./battery status
 sudo ./battery analyze
 ```
 If you get messages like "Failure: cannot read ..." using these commands, wait a short time and
 repeat the command until you do not get the failure. Unfortunately the i2c bus on the Raspberry
-Pi is often not very reliable due to a hardware limitation.
+Pi is often not very reliable due to a hardware limitation. The "pkill" command has killed the
+pi-top-battery-status display program so that it does not interfere with the battery command.
+After the next reboot the pi-top-battery-status display will work again.
 
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
