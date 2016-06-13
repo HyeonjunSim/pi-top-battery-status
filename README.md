@@ -78,8 +78,20 @@ Release history:
 - Version 1.2a: current and other additional information added
 - Version 1.2b: warning and shutdown level changed
 
+** What to do if you have problems with your battery **
+
 pi-to-battery-status was improved while working with Ivo Van Ursel on a project to fully understand
 the pi-top-battery-pack. A summary of this project can be found in project.pdf in this repository.
+
+There is also a program called "battery" in this repository. If you are in the downloaded
+pi-top-battery-status directory, you can type
+```
+sudo battery status
+sudo battery analyze
+```
+If you get messages like "Failure: cannot read ..." using these commands, wait a short time and
+repeat the command until you do not get the failure. Unfortunately the i2c bus on the Raspberry
+Pi is often not very reliable due to a hardware limitation.
 
 Please help to improve this program by tweeting to
 **http://twitter.com/r_richarz** or opening an issue on this repository
