@@ -40,7 +40,7 @@ To install:
   cd Downloads
   git clone git://github.com/rricharz/pi-top-battery-status
   cd pi-top-battery-status
-  chmod +x ./install
+  chmod +x install
   ./install
 ```
 
@@ -78,6 +78,20 @@ Release history:
 - Version 1.2a: current and other additional information added
 - Version 1.2b: warning and shutdown level changed
 
+**Updating pi-top-battery-status**
+
+If you still have the "pi-top-battery-status" in your "Downloads" folder, updating to the newest version
+is very easy. Open a terminal and type:
+
+```
+  cd Downloads/pi-top-battery-status
+  git pull
+  chmod +x install
+  ./install
+```
+
+If you do not have that folder anymore, you need to go again through the original installation instructions.
+
 **What to do if you have problems with your battery**
 
 pi-to-battery-status was improved while working with Ivo Van Ursel on a project to fully understand
@@ -85,6 +99,7 @@ the pi-top-battery-pack. A summary of this project can be found in project.pdf i
 
 There is also a program called "battery" in this repository. If you are in the downloaded
 pi-top-battery-status directory, you can type
+
 ```
 pkill gtk_battery
 sudo ./battery status
