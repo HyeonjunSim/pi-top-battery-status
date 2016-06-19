@@ -105,6 +105,16 @@ pkill gtk_battery
 sudo ./battery status
 sudo ./battery analyze
 ```
+
+If you get an error message about "libpigpio", the pigpio library needs to be installed. This library is
+part of the current raspian software, but does unfortunately not get installed automatically on all older
+versions of Raspian and pi-topOS, if these older versions are upgraded. To install pigpio, type
+
+```
+sudo apt-get update
+sudo apt-get install pigpio
+```
+
 If you get messages like "Failure: cannot read ..." using these commands, wait a short time and
 repeat the command until you do not get the failure. Unfortunately the i2c bus on the Raspberry
 Pi is often not very reliable due to a hardware limitation. The "pkill" command has killed the
