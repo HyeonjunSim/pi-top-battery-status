@@ -23,7 +23,7 @@
  * 
  */
 
-#define VERSION			"S=1.2b"
+#define VERSION			"S=1.3"
 
 #include <time.h>
 #include <stdio.h>
@@ -117,7 +117,7 @@ void printLogEntry(int capacity, int current) {
 		fprintf(logFile, ", C=  n/a/");
 	printReg(0x0F,"mAh", 0, 5000);
 		
-	if (current > -4000)
+	if (current > -5000)
 		fprintf(logFile, ", A=%4dmA", current);
 	else
 		fprintf(logFile, ", A=   n/a");
@@ -188,7 +188,7 @@ static gboolean timer_event(GtkWidget *widget)
 			if (current > 32767)                   // status is signed 16 bit word
 				current -= 65536;
 			// printf("current = %d\n", current);
-			if ((current > -5000) && (current < 5000)) {
+			if ((current > -5000) && (current < 5000) && (current != -1)) {
 				stat_good++;
 				if (current < 0)
 					sstatus = "discharging";
@@ -272,7 +272,7 @@ static gboolean timer_event(GtkWidget *widget)
 	  w = (99 * capacity) / 400;
 	if (strcmp(sstatus,"charging") == 0)
 		cairo_set_source_rgb (cr, 1, 1, 0);
-	else if (capacity < redLevel)
+	else if (capacity <= redLevel)
 		cairo_set_source_rgb (cr, 1, 0, 0);
 	else if (strcmp(sstatus,"external power") == 0)
 	    cairo_set_source_rgb (cr, 0.5, 0.5, 0.7);
@@ -300,7 +300,7 @@ static gboolean timer_event(GtkWidget *widget)
 	  else if (capacity > 99)
 	    x -= 2;
 	  cairo_move_to(cr, x, 32);
-	  sprintf(str,"%2d %%",capacity);
+	  sprintf(str,"%2d%%",capacity);
 	  cairo_show_text(cr, str);
 	}
 		
@@ -320,7 +320,7 @@ static gboolean timer_event(GtkWidget *widget)
 	gtk_label_set_markup(GTK_LABEL(StatusLabel3), str);
 	sprintf(str,"<span size=\"medium\">%s</span>", timeStr);
 	gtk_label_set_markup(GTK_LABEL(StatusLabel4), str);
-	if ((current >= -5000) && (current <= 5000))
+	if ((current >= -5000) && (current <= 5000) && (current != -1))
 	  sprintf(str,"<span size=\"medium\">Current: %2d mA</span>", current);
 	else
 	  sprintf(str,"<span size=\"medium\">Current: n/a</span>", current);
@@ -331,17 +331,20 @@ static gboolean timer_event(GtkWidget *widget)
 
 	if (capacity > shutdownLevel)
 	  shutdownCounter = 0;
+	  
+	// printf("Capacity = %d, lowBattery = %d, status %s\n",capacity, lowBattery, sstatus);
 	
 	if ((capacity > 0) && (capacity <= lowBattery) && (strcmp(sstatus,"discharging") == 0)) {
 
 		if (capacity <= shutdownLevel) {
 		    shutdownCounter++;
 			sprintf(str,
-				"Battery capacity very low! To protect battery, automatic shutdown will happen in %d sec! (To abort shutdown: type 'pkill gtk_battery' in terminal window)",
-				120 - (5 * shutdownCounter));
-			fprintf(logFile,"%s\n",str);
-			fflush(logFile);
+				"Battery capacity very low! Automatic shutdown will happen in 2 minutes! (To abort shutdown, open a terminal and type 'pkill gtk_battery')");
+			if (shutdownCounter < 2) {
+				fprintf(logFile,"%s\n",str);
+				fflush(logFile);
 			}
+		}
 		else {
 			sprintf(str, 
 				"Battery capacity low! Automatic shutdown will happen at %d percent",
@@ -350,16 +353,19 @@ static gboolean timer_event(GtkWidget *widget)
 			fflush(logFile);
 		}
 		
-		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(MainWindow),
-			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, str);
-				
-		// open as non modal window
-		g_signal_connect_swapped (dialog, "response",
+		if (shutdownCounter < 2) {
+			GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(MainWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, str);		
+			// open as non modal window
+			g_signal_connect_swapped (dialog, "response",
 			G_CALLBACK (gtk_widget_destroy), dialog);
-		gtk_widget_show_all(dialog);
+			gtk_widget_show_all(dialog);
+		}
 		
 		if ((capacity <= shutdownLevel) && (shutdownCounter >= 20)) {
 			printLogEntry(capacity, current);
+			fprintf(logFile,"SHUTTNG SYSTEM DOWN\n",str);
+			fflush(logFile);
 			if (MAKELOG)
 				fclose(logFile);
 			system("sudo shutdown -h now &");
@@ -401,8 +407,6 @@ int main(int argc, char *argv[])
 	cairo_t *cr;
 	cairo_format_t format;
 	
-	lowBattery = warningLevel;
-	
 	lastCapacity = 0;
 	shutdownCounter = 0;
 	stat_good = 0;
@@ -429,15 +433,17 @@ int main(int argc, char *argv[])
 	}
 	fscanf(confFile, "red=%d\n", &redLevel);
 	if (redLevel < 10) redLevel = 10;
-	if (redLevel > 50) redLevel = 50;
+	if (redLevel > 90) redLevel = 90;
 	fscanf(confFile, "warning=%d\n", &warningLevel);
 	if (warningLevel < 8) warningLevel = 8;
-	if (warningLevel > 50) warningLevel = 50;
- 	fscanf(confFile, "shutdown=d\n", &shutdownLevel);
+	if (warningLevel > 90) warningLevel = 90;
+ 	fscanf(confFile, "shutdown=%d\n", &shutdownLevel);
 	if (shutdownLevel < 5) shutdownLevel = 5;
-	if (shutdownLevel > 20) shutdownLevel = 20;
+	if (shutdownLevel > 88) shutdownLevel = 88;
 	if (warningLevel < shutdownLevel + 2) warningLevel = shutdownLevel + 2;
 	if (redLevel < warningLevel) redLevel = warningLevel;
+	
+	lowBattery = warningLevel;
 
 	fclose(confFile);
   

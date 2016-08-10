@@ -65,19 +65,22 @@ You can test the compilation with
 
 After compilation you need to install the program again.
 
-The warning and shutdown levels can be adjusted in /home/pi/.config/pi-top/gtkbattery.txt.
-The values have to be within the following limits: 10 <= red = 50, 8 <= warning <= 50, 5 <= shutdown <= 20
+The red, warning and shutdown levels can be adjusted in /home/pi/.config/pi-top/gtk_battery.txt.
+The values have to be within the following limits:
+  10 <= red = 80, 8 <= warning <= 80, 5 <= shutdown <= 78
+  shutdown + 2 <= warning <= red
 
 To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
 
 Release history:
-- Version 1.0: First stable release
+- Version 1.0:  First stable release
 - Version 1.0a: Fixed a minor bug, which could show a battery charge > 100% under rare circumstances
-- Version 1.1: Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
+- Version 1.1:  Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
 - Version 1.1a: i2c reliablity in log file, improved checking for i2c failures
-- Version 1.2: using direct i2c access rather than calling i2cget to reduce overhead, shutdown only if discharging at low capacity
-- Version 1.2a: current and other additional information added
-- Version 1.2b: warning and shutdown level changed
+- Version 1.2:  Using direct i2c access rather than calling i2cget to reduce overhead, shutdown only if discharging at low capacity
+- Version 1.2a: Current and other additional information added
+- Version 1.2b: Warning and shutdown level changed
+- Version 1.3:  Importat bug fixed which prevented automatic shutdown under certain circumstances
 
 **Updating pi-top-battery-status**
 
