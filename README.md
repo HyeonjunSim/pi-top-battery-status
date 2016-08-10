@@ -1,4 +1,4 @@
-# pi-top-battery-status (version 1.2b)
+# pi-top-battery-status (version 1.3)
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
