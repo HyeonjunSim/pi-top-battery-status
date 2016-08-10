@@ -80,7 +80,7 @@ Release history:
 - Version 1.2:  Using direct i2c access rather than calling i2cget to reduce overhead, shutdown only if discharging at low capacity
 - Version 1.2a: Current and other additional information added
 - Version 1.2b: Warning and shutdown level changed
-- Version 1.3:  Importat bug fixed which prevented automatic shutdown under certain circumstances
+- Version 1.3:  Important bug fixed which prevented automatic shutdown under certain circumstances
 
 **Updating pi-top-battery-status**
 
