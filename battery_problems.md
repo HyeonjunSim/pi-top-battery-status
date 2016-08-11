@@ -1,7 +1,7 @@
 # WHAT TO DO IF YOU HAVE PROBLEMS WITH YOUR BATTERY
 
 The following procedure can be used to analyze and solve battery problems using pi-topOS or
-Raspbian Jessie, and with our witout having pi-top-battery-status installed. Typical problems are
+Raspbian Jessie, and with or witout having pi-top-battery-status installed. Typical problems are
 no charging, no power without the mains connected, or "fetching..." continously dispayed in pi-toOS.
 
 **Step 1: Does i2c work?**
@@ -70,7 +70,7 @@ If you still cannot see the 0b with i2cdetect, you have a serious hardware probl
 
 **Step 6: Check the charging current**
 
-You have establised communcation with the battery pack.
+You have established communcation with the battery pack.
 
 Type
 ```
@@ -81,7 +81,7 @@ If you get a "read failed", repeat the command by typing the up arrow followed b
 You should get a hexadezimal number, which represents the battery current. If you are not used to read hexadezimal
 numbers, use your internet browser and go to www.binaryhexconverter.com/hex-to-decimal-converter and enter the
 value in the hex field. If you get a value larger than 32767, subtract 65536 from this value to get a signed value.
-You shold have now a value for the current which should be in the range between -5000 and 5000 mA.
+You should have now a value for the current which should be in the range between -5000 and 5000 mA.
 
 A positive number means your battery is charging. Typical charging currents are in the order of 1400 mA.
 Everything is ok. Stop at this step and use your pi-top.
