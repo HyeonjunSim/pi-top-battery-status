@@ -1,7 +1,7 @@
 # WHAT TO DO IF YOU HAVE PROBLEMS WITH YOUR BATTERY
 
 The following procedure can be used to analyze and solve battery problems using pi-topOS or
-Raspbian Jessie, and with or witout having pi-top-battery-status installed. Typical problems are
+Raspbian Jessie, and with or without having pi-top-battery-status installed. Typical problems are
 no charging, no power without the mains connected, or "fetching..." continously dispayed in pi-toOS.
 
 **Step 1: Does i2c work?**
@@ -63,7 +63,7 @@ If you get this table with the 0b, proceed to step 6. Otherwise continue with st
 If you get a -- at the 0b position, the rpi cannot talk to the battery pack. Repeat the i2cetect command a few times to
 be sure that it does not see the 0b.
 
-Shut down your rpi and turn power off. Disconect he mains. Check the 40 pin cable between the rpi and the hub controller. Carefully look at both connectors to check for broken or
+Shut down your rpi and turn power off. Disconnect the mains. Check the 40 pin cable between the rpi and the hub controller. Carefully look at both connectors to check for broken or
 bend pins. Check also the connection between the battery pack and the hub controller. Reconnect the mains and turn your pi-top on. Go back to step 1.
 
 If you still cannot see the 0b with i2cdetect, you have a serious hardware problem. Contact pi-top support.
