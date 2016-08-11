@@ -2,7 +2,7 @@
 
 The following procedure can be used to analyze and solve battery problems using pi-topOS or
 Raspbian Jessie, and with or without having pi-top-battery-status installed. Typical problems are
-no charging, no power without the mains connected, or "fetching..." continously dispayed in pi-toOS.
+no charging, no power without the mains connected, or "fetching..." continuously displayed in pi-topOS.
 
 **Step 1: Does i2c work?**
 
@@ -32,9 +32,10 @@ Go back to step 1
 
 Open the following menu "Menu->Preferences->Raspberry Pi configuration", select "Interfaces".
 
-Is I2C already turned on?
+Is i2c already turned on?
 
-If yes, your system is damaged. pi-top proposes to install a fresh system on the SD card.
+If yes, your system is damaged. pi-top proposes to install a fresh system on the SD card. We think that
+running "sudo apt-get autoremove" in pi-topOS might cause this problem.
 
 If no, enable i2c and reboot your rpi. Then proceed with step 1.
 
@@ -60,7 +61,7 @@ If you get this table with the 0b, proceed to step 6. Otherwise continue with st
 
 **Step 5: Check and fix your hardware**
 
-If you get a -- at the 0b position, the rpi cannot talk to the battery pack. Repeat the i2cetect command a few times to
+If you get a -- at the 0b position, the rpi cannot talk to the battery pack. Repeat the i2cdetect command a few times to
 be sure that it does not see the 0b.
 
 Shut down your rpi and turn power off. Disconnect the mains. Check the 40 pin cable between the rpi and the hub controller. Carefully look at both connectors to check for broken or
@@ -70,7 +71,7 @@ If you still cannot see the 0b with i2cdetect, you have a serious hardware probl
 
 **Step 6: Check the charging current**
 
-You have established communcation with the battery pack.
+You have established communication with the battery pack.
 
 Type
 ```
@@ -78,7 +79,7 @@ i2cget -y 1 0x0b 0x0a w
 ```
 If you get a "read failed", repeat the command by typing the up arrow followed by the enter key, until you get a value.
 
-You should get a hexadezimal number, which represents the battery current. If you are not used to read hexadezimal
+You should get a hex number, which represents the battery current. If you are not used to read hex
 numbers, use your internet browser and go to www.binaryhexconverter.com/hex-to-decimal-converter and enter the
 value in the hex field. If you get a value larger than 32767, subtract 65536 from this value to get a signed value.
 You should have now a value for the current which should be in the range between -5000 and 5000 mA.
