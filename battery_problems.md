@@ -4,7 +4,7 @@ The following procedure can be used to analyze and solve battery problems using 
 Raspbian Jessie, and with our witout having pi-top-battery-status installed. Typical problems are
 no charging, no power without the mains connected, or "fetching..." continously dispayed in pi-toOS.
 
-**Step 1: Does i2c work**
+**Step 1: Does i2c work?**
 
 The rpi communicates with the bq40z60 of the intelligent battery pack using i2c. A fully functional
 i2c connection is therefore required.
@@ -76,7 +76,7 @@ Type
 ```
 i2cget -y 1 0x0b 0x0a w
 ```
-If you get a "read failed", repeat the command by typing the up arrow following by the enter key, until you get a value.
+If you get a "read failed", repeat the command by typing the up arrow followed by the enter key, until you get a value.
 
 You should get a hexadezimal number, which represents the battery current. If you are not used to read hexadezimal
 numbers, use your internet browser and go to www.binaryhexconverter.com/hex-to-decimal-converter and enter the
@@ -140,7 +140,7 @@ wget https://s3-us-west-2.amazonaws.com/pi-top/pt-battery-fw-update_v2
 ```
 
 To run:
-`
+
 ```
 sudo ./pt-battery-fw-update_v2 -d
 ```
@@ -149,6 +149,11 @@ pi-top recommends to run it 5 -10 times successfully. You can use the up-arrow-k
 the command.
 
 Once done, go back to step 6 and check the charging current.
+
+
+Please report any problems and suggested improvements of this procedures to r77@bluewin.ch 
+
+Your feedback is most welcome.
 
 
 
