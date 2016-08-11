@@ -113,7 +113,7 @@ dtparam=i2c_arm_baudrate=75000
 
 **What to do if you have problems with your battery**
 
-See https://github.com/rricharz/pi-top-battery-status/blob/master/battery_problems.md
+See the troubleshooting guide at https://github.com/rricharz/pi-top-battery-status/blob/master/battery_problems.md
 
 
 Please help to improve this program by tweeting to

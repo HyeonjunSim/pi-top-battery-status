@@ -1,5 +1,7 @@
 # WHAT TO DO IF YOU HAVE PROBLEMS WITH YOUR BATTERY
 
+by Rene Richarz r77@bluewin.ch
+
 The following procedure can be used to analyze and solve battery problems using pi-topOS or
 Raspbian Jessie, and with or without having pi-top-battery-status installed. Typical problems are
 no charging, no power without the mains connected, or "fetching..." continuously displayed in pi-topOS.
@@ -67,7 +69,7 @@ be sure that it does not see the 0b.
 Shut down your rpi and turn power off. Disconnect the mains. Check the 40 pin cable between the rpi and the hub controller. Carefully look at both connectors to check for broken or
 bend pins. Check also the connection between the battery pack and the hub controller. Reconnect the mains and turn your pi-top on. Go back to step 1.
 
-If you still cannot see the 0b with i2cdetect, you have a serious hardware problem. Contact pi-top support.
+If you still cannot see the 0b with i2cdetect, you have a serious hardware problem. Contact support@pi-top.com.
 
 **Step 6: Check the charging current**
 
@@ -149,7 +151,12 @@ sudo ./pt-battery-fw-update_v2 -d
 pi-top recommends to run it 5 -10 times successfully. You can use the up-arrow-key followed by the enter key to repeat
 the command.
 
-Once done, go back to step 6 and check the charging current.
+Once done, go back to step 6 and check the charging current. If everything is well now, I recommend that you
+install pi-top-battery-status from https://github.com/rricharz/pi-top-battery-status to make sure that this problem does
+not happen again. If you use Raspbian Jessie instead of pi-topOS, you also need to install the shutdown process of 
+https://github.com/rricharz/pi-top-install
+
+If it still does not work, contact support2pi-top.com
 
 
 Please report any problems and suggested improvements of this procedures to r77@bluewin.ch 
