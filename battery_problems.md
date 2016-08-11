@@ -156,7 +156,7 @@ install pi-top-battery-status from https://github.com/rricharz/pi-top-battery-st
 not happen again. If you use Raspbian Jessie instead of pi-topOS, you also need to install the shutdown process of 
 https://github.com/rricharz/pi-top-install
 
-If it still does not work, contact support2pi-top.com
+If it still does not work, contact support@pi-top.com
 
 
 Please report any problems and suggested improvements of this procedures to r77@bluewin.ch 
