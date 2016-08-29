@@ -96,20 +96,6 @@ is very easy. Open a terminal and type:
 
 If you do not have that folder anymore, you need to go again through the original installation instructions.
 
-**Optimizing i2c on a Raspberry Pi 3 for pi-top**
-
-This is for experienced users only, if pi-top-battery-status is used on Raspbian Jessie (pi-topOS does overclock by default).
-
-Our tests have shown that i2c works best with an rpi3 on the pi-top if the rpi3 is overclocked by putting
-the following at the end of /boot/config.txt
-
-```
-# Optimize settings for pi-top
-core_freq=500
-sdram_freq=500
-over_voltage=2
-dtparam=i2c_arm_baudrate=75000
-```
 
 **What to do if you have problems with your battery**
 

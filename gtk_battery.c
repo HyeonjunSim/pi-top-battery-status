@@ -364,7 +364,7 @@ static gboolean timer_event(GtkWidget *widget)
 		
 		if ((capacity <= shutdownLevel) && (shutdownCounter >= 20)) {
 			printLogEntry(capacity, current);
-			fprintf(logFile,"SHUTTNG SYSTEM DOWN\n",str);
+			fprintf(logFile,"SHUTTING SYSTEM DOWN\n",str);
 			fflush(logFile);
 			if (MAKELOG)
 				fclose(logFile);
