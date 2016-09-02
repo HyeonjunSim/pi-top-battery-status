@@ -129,8 +129,7 @@ Execute the battery status tool
   sudo ./battery analyze
 ```
 You might have to repeat the last two commands several times until you get an output without a "Failure".
-If you cannot see yourself what the problem is, you can send the output of the 2 commands to r77@bluewin.ch
-for a free explanation.
+
 
 **Step 9: Run the pi-top firmware upgrade**
 
