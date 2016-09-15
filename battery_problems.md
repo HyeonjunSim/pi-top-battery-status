@@ -6,6 +6,9 @@ The following procedure can be used to analyze and solve battery problems using 
 Raspbian Jessie, and with or without having pi-top-battery-status installed. Typical problems are
 no charging, no power without the mains connected, or "fetching..." continuously displayed in pi-topOS.
 
+Warning:! Fire hazard of Lithium Ion batteries: It is very strongly discouraged to tinker with the battery pack
+or the firmware of the battery pack.
+
 **Step 1: Does i2c work?**
 
 The rpi communicates with the bq40z60 of the intelligent battery pack using i2c. A fully functional
@@ -67,7 +70,7 @@ If you get a -- at the 0b position, the rpi cannot talk to the battery pack. Rep
 be sure that it does not see the 0b.
 
 Shut down your rpi and turn power off. Disconnect the mains. Check the 40 pin cable between the rpi and the hub controller. Carefully look at both connectors to check for broken or
-bend pins. Check also the connection between the battery pack and the hub controller. Reconnect the mains and turn your pi-top on. Go back to step 1.
+bend pins.
 
 If you still cannot see the 0b with i2cdetect, you have a serious hardware problem. Contact support@pi-top.com.
 
