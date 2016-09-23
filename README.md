@@ -102,9 +102,7 @@ If you do not have that folder anymore, you need to go again through the origina
 See the troubleshooting guide at https://github.com/rricharz/pi-top-battery-status/blob/master/battery_problems.md
 
 
-Please help to improve this program by tweeting to
-**http://twitter.com/r_richarz** or opening an issue on this repository
-if you have any problem or suggestion.
+Please open an issue on this repositoryif you have a problem with the program.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
