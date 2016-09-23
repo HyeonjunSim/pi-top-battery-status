@@ -1,7 +1,5 @@
 # WHAT TO DO IF YOU HAVE PROBLEMS WITH YOUR BATTERY
 
-by Rene Richarz r77@bluewin.ch
-
 The following procedure can be used to analyze and solve battery problems using pi-topOS or
 Raspbian Jessie, and with or without having pi-top-battery-status installed. Typical problems are
 no charging, no power without the mains connected, or "fetching..." continuously displayed in pi-topOS.
@@ -107,34 +105,12 @@ i2cget -y 1 0x0b 0x0d w
 ```
 and convert the result to decimal as described in step 6.
 
-The result is the current capacity. If it is above 90%, your pi-top battery is not charging because your battery
+The result is the current capacity. If it is above 95%, your pi-top battery is not charging because your battery
 is almost full.
 
-If it is near or at 0%, there is a problem preventing the battery from charging. If you just want to fix the problem
-proceed to step 9. If you want to know more details about the problem, go on to step 8.
+If it is near or at 0%, there is a problem preventing the battery from charging.
 
-**Step 8: Analyzing the problem**
-
-Download this repository, if you have not already done so. Open a terminal and type
-
-```
-  cd Downloads
-  git clone git://github.com/rricharz/pi-top-battery-status
-```
-
-Execute the battery status tool
-
-```
-  sudo apt-get install pigpio
-  cd Downloads/pi-top-battery-status
-  chmod +x battery
-  sudo ./battery status
-  sudo ./battery analyze
-```
-You might have to repeat the last two commands several times until you get an output without a "Failure".
-
-
-**Step 9: Run the pi-top firmware upgrade**
+**Step 8: Run the pi-top firmware upgrade**
 
 Download and execute the pi-top firmware upgrade as follows. This will hopefully resolve your battery problem:
 
