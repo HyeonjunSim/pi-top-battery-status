@@ -87,6 +87,7 @@ Release history:
 - Version 1.2a: Current and other additional information added
 - Version 1.2b: Warning and shutdown level changed
 - Version 1.3:  Important bug fixed which prevented automatic shutdown under certain circumstances
+- Version 1.4:  Very slight adjustment of battery charge display for new PIXEL desktop
 
 **Updating pi-top-battery-status**
 

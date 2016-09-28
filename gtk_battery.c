@@ -23,7 +23,7 @@
  * 
  */
 
-#define VERSION			"S=1.3"
+#define VERSION			"S=1.4"
 
 #include <time.h>
 #include <stdio.h>
@@ -288,18 +288,18 @@ static gboolean timer_event(GtkWidget *widget)
 	
 	// display the capacity figure
 	cairo_set_source_rgb (cr, GRAY_LEVEL, GRAY_LEVEL, GRAY_LEVEL);
-	cairo_rectangle (cr, 2, 20, 34, 15);
+	cairo_rectangle (cr, 2, 20, 32, 15);
 	cairo_fill (cr);   
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_select_font_face(cr, "Dosis", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size(cr, 12);
 	if (capacity >= 0) {
-	  int x = 5;
+	  int x = 2;
 	  if (capacity < 10)
 	    x += 2;
 	  else if (capacity > 99)
 	    x -= 2;
-	  cairo_move_to(cr, x, 32);
+	  cairo_move_to(cr, x, 33);
 	  sprintf(str,"%2d%%",capacity);
 	  cairo_show_text(cr, str);
 	}
