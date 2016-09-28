@@ -10,6 +10,10 @@
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
 The battery status is displayed on the desktop panel.
+
+The current version of the program works on the latest Raspian Jessie and the PIXEL desktop, but needs to be reinstalled
+after upgrading to PIXEL. The program also works on pi-topOS.
+
 **You must be user pi to install and use the program.**
 Make sure that i2c is enabled in raspi-config.
 
