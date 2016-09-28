@@ -72,6 +72,7 @@ The values have to be within the following limits:
 
 To uninstall this program
 ```
+  cd ~/Downloads/pi-top-battery-status
   chmod +x ./uninstall
   ./uninstall
 ```
