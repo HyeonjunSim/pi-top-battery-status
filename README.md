@@ -70,7 +70,12 @@ The values have to be within the following limits:
   10 <= red = 80, 8 <= warning <= 80, 5 <= shutdown <= 78
   shutdown + 2 <= warning <= red
 
-To uninstall this program, edit /home/pi/.config/lxsession/LXDE-pi/autostart (remove line calling gtk_battery)
+To uninstall this program
+```
+  chmod +x ./uninstall
+  ./uninstall
+```
+
 
 Release history:
 - Version 1.0:  First stable release
