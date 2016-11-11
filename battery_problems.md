@@ -117,13 +117,13 @@ Download and execute the pi-top firmware upgrade as follows. This will hopefully
 To download:
 
 ```
-wget https://s3-us-west-2.amazonaws.com/pi-top/pt-battery-fw-update_v2
+wget assets.pi-top.com/patches/pt-battery-fw-update
 ```
 
 To run:
 
 ```
-sudo ./pt-battery-fw-update_v2 -d
+sudo ./pt-battery-fw-update -d
 ```
 
 pi-top recommends to run it 5 -10 times successfully. You can use the up-arrow-key followed by the enter key to repeat
