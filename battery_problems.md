@@ -118,6 +118,7 @@ To download:
 
 ```
 wget assets.pi-top.com/patches/pt-battery-fw-update
+sudo chmod a=r+w+x pt-battery-fw-update
 ```
 
 To run:
