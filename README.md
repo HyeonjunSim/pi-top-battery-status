@@ -11,7 +11,7 @@
 
 The battery status is displayed on the desktop panel.
 
-The current version of the program works on the latest Raspian Jessie and the PIXEL desktop, as well as on pi-topOS Solaris and earlier versions.
+The current version of the program works on the latest Raspian Jessie and the PIXEL desktop, as well as on pi-topOS Polaris and earlier versions.
 
 **You must be user pi to install and use the program.**
 Make sure that i2c is enabled in raspi-config.
