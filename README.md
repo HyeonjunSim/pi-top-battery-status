@@ -112,7 +112,7 @@ If you do not have that folder anymore, you need to go again through the origina
 See the troubleshooting guide at https://github.com/rricharz/pi-top-battery-status/blob/master/battery_problems.md
 
 
-Please open an issue on this repositoryif you have a problem with the program.
+Please open an issue on this repository if you have a problem with the program.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -130,5 +130,5 @@ https://github.com/JezShed/PiTop-Unicorn-Battery-Gauge
 - It is possible to use the standard battery display widget of the standard Raspbian desktop using
 "i2c bitbanging". Christopher Clements has written instructions for this, see
 https://github.com/bcnjr5/linux-pitop-battery
-But be aware that the battery display in pi-topOS and the pi-topSPEAKER will not work with this approach.
+. But be aware that the battery display in pi-topOS and the pi-topSPEAKER will not work with this approach.
 
