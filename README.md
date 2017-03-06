@@ -126,3 +126,9 @@ repository is not affiliated with pi-top.
 https://shop.pimoroni.com/products/unicorn-hat
 instead of the desktop panel, Jez Shed has written a python script, see
 https://github.com/JezShed/PiTop-Unicorn-Battery-Gauge
+
+- It is possible to use the standard battery display widget of the standard Raspbian desktop using
+"i2c bitbanging". Christopher Clements has written instructions for this, see
+https://github.com/bcnjr5/linux-pitop-battery
+But be aware that the battery display in pi-topOS and the pi-topSPEAKER will not work with this approach.
+
