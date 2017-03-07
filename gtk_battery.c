@@ -23,7 +23,7 @@
  * 
  */
 
-#define VERSION			"S=1.4"
+#define VERSION			"S=1.4a"
 
 #include <time.h>
 #include <stdio.h>

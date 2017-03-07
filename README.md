@@ -91,6 +91,7 @@ Release history:
 - Version 1.2b: Warning and shutdown level changed
 - Version 1.3:  Important bug fixed which prevented automatic shutdown under certain circumstances
 - Version 1.4:  Very slight adjustment of battery charge display for new PIXEL desktop
+- Version 1.4a: Fixed a bug (segmentation fault when config file does not exist), thanks to @robvadenbogaard
 
 **Updating pi-top-battery-status**
 
@@ -130,7 +131,7 @@ https://github.com/JezShed/PiTop-Unicorn-Battery-Gauge
 - It is possible to use the standard battery display widget of the standard Raspbian desktop using
 "i2c bitbanging". Christopher Clements has written instructions for this, see
 https://github.com/bcnjr5/linux-pitop-battery. But be aware that the battery display in pi-topOS
-will not work with this approach, because the battery module is reserved for the kernel driver.
+will not work with this approach, because the battery module monopolizes the access to the battery module.
 Thanks also to Krzysztof A. Adamski for the "i2c bitbanging" kernel module used in Christophers solution, see
 https://github.com/kadamski/i2c-gpio-param
 
