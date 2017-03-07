@@ -427,10 +427,11 @@ int main(int argc, char *argv[])
 	
 	FILE *confFile;
 	confFile = fopen("/home/pi/.config/pi-top/gtk_battery.txt","r");
-  	if (confFile < 0) {
-		fprintf(confFile,"Cannot open /home/pi/.config/pi-top/gtk_battery.txt\n");
+  	if (confFile == NULL) {
+		fprintf(logFile,"Cannot open /home/pi/.config/pi-top/gtk_battery.txt\n");
 		return 1;
 	}
+
 	fscanf(confFile, "red=%d\n", &redLevel);
 	if (redLevel < 10) redLevel = 10;
 	if (redLevel > 90) redLevel = 90;
