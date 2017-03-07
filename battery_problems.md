@@ -110,7 +110,12 @@ is almost full.
 
 If it is near or at 0%, there is a problem preventing the battery from charging.
 
-**Step 8: Run the pi-top firmware upgrade**
+**Step 8: use analyze to understand your battery problem
+
+f you are inerested, you can use the program analyze to get more informatin about your battery. See
+https://github.com/rricharz/pi-top-battery-analyze
+
+**Step 9: Run the pi-top firmware upgrade**
 
 Download and execute the pi-top firmware upgrade as follows. This will hopefully resolve your battery problem:
 
