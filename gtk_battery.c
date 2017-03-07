@@ -448,9 +448,9 @@ int main(int argc, char *argv[])
 
 	fclose(confFile);
   
-	printf("red=%d\n", redLevel);
-	printf("warning=%d\n", warningLevel);
-	printf("shutdown=%d\n", shutdownLevel);
+	fprintf(logFile,"red=%d\n", redLevel);
+	fprintf(logFile,"warning=%d\n", warningLevel);
+	fprintf(logFile,"shutdown=%d\n", shutdownLevel);
 
 	gtk_init(&argc, &argv);
 	
