@@ -451,8 +451,8 @@ int main(int argc, char *argv[])
 	
 	lowBattery = warningLevel;
   
-	fprintf(logFile,"red=%d\n", redLevel);
-	fprintf(logFile,"warning=%d\n", warningLevel);
+	fprintf(logFile,"red=%d, ", redLevel);
+	fprintf(logFile,"warning=%d, ", warningLevel);
 	fprintf(logFile,"shutdown=%d\n", shutdownLevel);
 
 	gtk_init(&argc, &argv);
