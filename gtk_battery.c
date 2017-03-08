@@ -428,25 +428,28 @@ int main(int argc, char *argv[])
 	FILE *confFile;
 	confFile = fopen("/home/pi/.config/pi-top/gtk_battery.txt","r");
   	if (confFile == NULL) {
-		fprintf(logFile,"Cannot open /home/pi/.config/pi-top/gtk_battery.txt\n");
-		return 1;
+		fprintf(logFile,"Cannot open /home/pi/.config/pi-top/gtk_battery.txt, using defaults\n");
+		redLevel = 10;
+		warningLevel = 8;
+		shutdownLevel = 5;
 	}
-
-	fscanf(confFile, "red=%d\n", &redLevel);
-	if (redLevel < 10) redLevel = 10;
-	if (redLevel > 90) redLevel = 90;
-	fscanf(confFile, "warning=%d\n", &warningLevel);
-	if (warningLevel < 8) warningLevel = 8;
-	if (warningLevel > 90) warningLevel = 90;
- 	fscanf(confFile, "shutdown=%d\n", &shutdownLevel);
-	if (shutdownLevel < 5) shutdownLevel = 5;
-	if (shutdownLevel > 88) shutdownLevel = 88;
-	if (warningLevel < shutdownLevel + 2) warningLevel = shutdownLevel + 2;
-	if (redLevel < warningLevel) redLevel = warningLevel;
+	else {
+		fscanf(confFile, "red=%d\n", &redLevel);
+		if (redLevel < 10) redLevel = 10;
+		if (redLevel > 90) redLevel = 90;
+		fscanf(confFile, "warning=%d\n", &warningLevel);
+		if (warningLevel < 8) warningLevel = 8;
+		if (warningLevel > 90) warningLevel = 90;
+		fscanf(confFile, "shutdown=%d\n", &shutdownLevel);
+		if (shutdownLevel < 5) shutdownLevel = 5;
+		if (shutdownLevel > 88) shutdownLevel = 88;
+		if (warningLevel < shutdownLevel + 2) warningLevel = shutdownLevel + 2;
+		if (redLevel < warningLevel) redLevel = warningLevel;
+		
+		fclose(confFile);
+	}
 	
 	lowBattery = warningLevel;
-
-	fclose(confFile);
   
 	fprintf(logFile,"red=%d\n", redLevel);
 	fprintf(logFile,"warning=%d\n", warningLevel);
