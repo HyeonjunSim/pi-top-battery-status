@@ -41,7 +41,7 @@ To install:
 
 ```
   cd Downloads
-  git clone git://github.com/rricharz/pi-top-battery-status
+  git clone --depth 1 git://github.com/rricharz/pi-top-battery-status
   sudo apt-get install wiringpi
   cd pi-top-battery-status
   chmod +x install
