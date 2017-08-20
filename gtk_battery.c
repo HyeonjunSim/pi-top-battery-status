@@ -67,6 +67,18 @@ FILE *logFile;
 
 int i2c_handle;
 
+int i2cget(int address, int *data)
+{
+	int res = wiringPiI2CReadReg16(i2c_handle, address);
+	if (res < 0)
+		return -1;
+	else {
+		*data = res;
+		return 0;
+	}
+}
+
+
 void printReg(int reg, char* unit, int min, int max)
 {
 	int count = 0;
@@ -131,17 +143,6 @@ void printLogEntry(int capacity, int current) {
 	printReg(0x3C,"mV)", 2000, 5000);
 	fprintf(logFile, "\n");
 	fflush(logFile);
-}
-
-int i2cget(int address, int *data)
-{
-	int res = wiringPiI2CReadReg16(i2c_handle, address);
-	if (res < 0)
-		return -1;
-	else {
-		*data = res;
-		return 0;
-	}
 }
 
 static gboolean timer_event(GtkWidget *widget)
