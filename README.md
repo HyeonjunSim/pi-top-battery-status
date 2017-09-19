@@ -67,9 +67,9 @@ You can test the compilation with
 
 After compilation you need to install the program again.
 
-The red, warning and shutdown levels can be adjusted in /home/pi/.config/pi-top/gtk_battery.txt.
+The red, warning and shutdown levels can be adjusted in ~/.config/pi-top/gtk_battery.txt.
 The values have to be within the following limits:
-  10 <= red = 80, 8 <= warning <= 80, 5 <= shutdown <= 78
+  10 <= red = 80, 8 <= warning <= 80, 5 <= shutdown <= 78,
   shutdown + 2 <= warning <= red
 
 To uninstall this program
