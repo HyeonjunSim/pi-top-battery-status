@@ -1,3 +1,9 @@
+if [ `whoami` = root ]; then
+  echo "Please run as the user who has started the desktop, not as root"
+  exit 1
+fi
+
+
 # kill any running gtk_battery command so that it can be overwritten
 pkill gtk_battery
 
