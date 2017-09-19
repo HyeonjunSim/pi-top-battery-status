@@ -1,20 +1,15 @@
-# check if the install script is run by the 'pi' user
-if [ `whoami` != pi ]; then
-        echo "Please run as 'pi' user"
-        exit 1
-fi
 
 # kill running gtk_battery command
 pkill gtk_battery
 
-#remove files from /home/pi/bin
-rm /home/pi/bin/battery_icon.png
-rm /home/pi/bin/gtk_battery
+#remove files from ~/bin
+rm ~/bin/battery_icon.png
+rm ~/bin/gtk_battery
 
-#remove file from /home/pi/.config/pi-top
-rm /home/pi/.config/pi-top/gtk_battery.txt
+#remove file from ~/.config/pi-top
+rm ~/.config/pi-top/gtk_battery.txt
 
 # remove line from lxsession autostart
-cd /home/pi/.config/lxsession/LXDE-pi/
+cd ~/.config/lxsession/LXDE-pi/
 grep -v "gtk_battery" ./autostart > temp
 mv temp autostart

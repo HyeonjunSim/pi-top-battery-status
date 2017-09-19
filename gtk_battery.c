@@ -3,7 +3,7 @@
  * gtk_battery.c
  * display pi-top battery status
 
- * Copyright 2016  rricharz 
+ * Copyright 2016, 2017  rricharz 
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,15 @@
  * 
  */
 
-#define VERSION			"S=1.4a"
+#define VERSION			"S=1.5"
 
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include <cairo.h>
 #include <gtk/gtk.h>
@@ -414,8 +416,14 @@ int main(int argc, char *argv[])
 	stat_total = 0;
 	first = 1;
 	
+	const char *homedir = getpwuid(getuid())->pw_dir;	
+	char s[255];
+	
 	if (MAKELOG) {
-		logFile = fopen("/home/pi/batteryLog.txt","a");
+		strcpy(s, homedir);
+		strcat(s, "/batteryLog.txt" );
+		// printf("s = %s\n",s);
+		logFile = fopen(s,"a");
 	}
 	else
 		logFile = stdout;
@@ -427,9 +435,12 @@ int main(int argc, char *argv[])
 	}
 	
 	FILE *confFile;
-	confFile = fopen("/home/pi/.config/pi-top/gtk_battery.txt","r");
+	strcpy(s, homedir);
+	strcat(s, "/.config/pi-top/gtk_battery.txt" );
+	// printf("s = %s\n",s);
+	confFile = fopen(s,"r");
   	if (confFile == NULL) {
-		fprintf(logFile,"Cannot open /home/pi/.config/pi-top/gtk_battery.txt, using defaults\n");
+		fprintf(logFile,"Cannot open %s, using defaults\n",s);
 		redLevel = 10;
 		warningLevel = 8;
 		shutdownLevel = 5;
@@ -477,10 +488,12 @@ int main(int argc, char *argv[])
 	gtk_window_iconify(GTK_WINDOW(MainWindow));
 	
 	// create the drawing surface and fill with icon
-	char *iconPath = "/home/pi/bin/battery_icon.png";
-	pixbuf = gdk_pixbuf_new_from_file (iconPath, NULL);
+	strcpy(s, homedir);
+	strcat(s, "/bin/battery_icon.png" );
+	// printf("s = %s\n",s);
+	pixbuf = gdk_pixbuf_new_from_file (s, NULL);
 	if (pixbuf == NULL) {
-		fprintf(logFile, "Cannot load icon (/home/pi/bin/battery_icon.png)\n", -1);
+		fprintf(logFile, "Cannot load icon (%s)\n", s);
 		return 1;
 	}
 	format = (gdk_pixbuf_get_has_alpha (pixbuf)) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;

@@ -1,34 +1,28 @@
-# check if the install script is run by the 'pi' user
-if [ `whoami` != pi ]; then
-        echo "Please run as 'pi' user"
-        exit 1
-fi
-
 # kill any running gtk_battery command so that it can be overwritten
 pkill gtk_battery
 
-# create bin directory in /home/pi, if it does not exist
-[ ! -d /home/pi/bin  ] && mkdir /home/pi/bin
+# create bin directory in ~, if it does not exist
+[ ! -d ~/bin  ] && mkdir ~/bin
 
 #make sure that files are executable
 chmod +x gtk_battery
 
-#copy necessary files to /home/pi/bin
-cp battery_icon.png /home/pi/bin
-cp gtk_battery /home/pi/bin
+#copy necessary files to ~/bin
+cp battery_icon.png ~/bin
+cp gtk_battery ~/bin
 
-# create pi-top directory in /home/pi/.config/, if it does not exist
-[ ! -d /home/pi/.config/pi-top  ] && mkdir /home/pi/.config/pi-top
+# create pi-top directory in ~/.config/, if it does not exist
+[ ! -d ~/.config/pi-top  ] && mkdir ~/.config/pi-top
 
-#copy necessary file to /home/pi/.config/pi-top
-cp gtk_battery.txt /home/pi/.config/pi-top
+#copy necessary file to ~/.config/pi-top
+cp gtk_battery.txt ~/.config/pi-top
 
 # add line to lxsession autostart, if it does not already exist
-if ! grep -q "gtk_battery" /home/pi/.config/lxsession/LXDE-pi/autostart
+if ! grep -q "gtk_battery" ~/.config/lxsession/LXDE-pi/autostart
 then
-    cp /home/pi/.config/lxsession/LXDE-pi/autostart ./lxsession_autostart_backup
-    echo "@gtk_battery > /dev/null &" >> /home/pi/.config/lxsession/LXDE-pi/autostart
+    cp ~/.config/lxsession/LXDE-pi/autostart ./lxsession_autostart_backup
+    echo "@gtk_battery > /dev/null &" >> ~/.config/lxsession/LXDE-pi/autostart
 fi
 
 #restart gtk_battery in background making sure that it lives on if calling console is closed
-nohup /home/pi/bin/gtk_battery > /dev/null 2>/dev/null &
+nohup ~/bin/gtk_battery > /dev/null 2>/dev/null &

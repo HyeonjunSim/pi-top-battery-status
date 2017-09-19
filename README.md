@@ -1,11 +1,11 @@
-# pi-top-battery-status (version 1.4a)
+# pi-top-battery-status (version 1.5)
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
 - Displays the charging and discharging current in mA
 - Gives a warning if capacity is less or equal to 10%
 - Shuts system down if capacity reaches 5% and on battery power
-- Logs all activities in /home/pi/batteryLog.txt
+- Logs all activities in ~/batteryLog.txt
 
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
@@ -13,7 +13,6 @@ The battery status is displayed on the desktop panel.
 
 The current version of the program works on the latest Raspbian Stretch, Raspbian Jessie, as well as on pi-topOS Polaris and earlier versions.
 
-**You must be user pi to install and use the program.**
 Make sure that i2c is enabled in raspi-config.
 
 If the icon is clicked, a window is opened which displays the following information:
@@ -92,6 +91,7 @@ Release history:
 - Version 1.3:  Important bug fixed which prevented automatic shutdown under certain circumstances
 - Version 1.4:  Very slight adjustment of battery charge display for new PIXEL desktop
 - Version 1.4a: Fixed a bug (segmentation fault when config file does not exist), thanks to @robvadenbogaard
+- Version 1.5:  Modified to work for other users
 
 **Updating pi-top-battery-status**
 
@@ -112,6 +112,11 @@ If you do not have that folder anymore, you need to go again through the origina
 
 See the troubleshooting guide at https://github.com/rricharz/pi-top-battery-status/blob/master/battery_problems.md
 
+**Using the program as a user other than pi**
+
+The latest version (1.5) has been modified to be used with other users than pi. If you want to install pi-top-battery-status
+for a different user, download and install it being that user. Make sure that the user has all the necessary privileges:
+See for example https://modmypi.com/blog/how-to-add-new-users-and-add-users-to-groups for details.
 
 Please open an issue on this repository if you have a problem with the program.
 
