@@ -7,6 +7,9 @@
 - Shuts system down if capacity reaches 5% and on battery power
 - Logs all activities in ~/batteryLog.txt
 
+This program is for the original pi-top laptop. It has not yet been tested on the new pi-top laptop
+(released October 15, 2017) with the sliding keyboard.
+
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
 The battery status is displayed on the desktop panel.
