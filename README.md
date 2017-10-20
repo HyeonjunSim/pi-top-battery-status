@@ -7,12 +7,15 @@
 - Shuts system down if capacity reaches 5% and on battery power
 - Logs all activities in ~/batteryLog.txt
 
-This program is for the original pi-top laptop. It has not yet been tested on the new pi-top laptop
-(released October 15, 2017) with the sliding keyboard.
-
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
 The battery status is displayed on the desktop panel.
+
+> **Important!**
+> This program is for the original pi-top laptop.
+> It has not been tested with the new pi-top laptop (released October 13, 2017) with the sliding keyboard.
+> It will probably not work on this new device.
+> I will add details on how to replace it on this new device as soon as they become available.
 
 The current version of the program works on the latest Raspbian Stretch, Raspbian Jessie, as well as on pi-topOS Polaris and earlier versions.
 
@@ -37,7 +40,7 @@ The log file logs detailed information about the status and health of the batter
 - Individual voltage of each of the 4 cells of the battery
  
 
-To install:
+**To install:**
 
 - Download the repository to your pi-top:
 
@@ -75,15 +78,16 @@ The values have to be within the following limits:
   10 <= red = 80, 8 <= warning <= 80, 5 <= shutdown <= 78,
   shutdown + 2 <= warning <= red
 
-To uninstall this program
+**To uninstall this program**
+
 ```
   cd ~/Downloads/pi-top-battery-status
   chmod +x ./uninstall
   ./uninstall
 ```
 
+**Release history:**
 
-Release history:
 - Version 1.0:  First stable release
 - Version 1.0a: Fixed a minor bug, which could show a battery charge > 100% under rare circumstances
 - Version 1.1:  Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
