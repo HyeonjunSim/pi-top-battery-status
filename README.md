@@ -15,7 +15,13 @@ The battery status is displayed on the desktop panel.
 > This program is for the original pi-top laptop.
 > It has not been tested with the new pi-top laptop (released October 13, 2017) with the sliding keyboard.
 > It will probably not work on this new device.
-> I will add details on how to replace it on this new device as soon as they become available.
+
+> If you are using pi-topOS, consider using
+> [pi-top-battery-widget](http:github.com/rricharz/pi-top-battery-widget)
+> instead of pi-top-battery-status. It displays the battery icon in the system tray and
+> uses the pi-top hardware manager to obtain the battery information rather than polling
+> the battery directly. This eliminates unnecessary traffic on the i2c bus and is more in
+> line with the current pi-topOS software.
 
 The current version of the program works on the latest Raspbian Stretch, Raspbian Jessie, as well as on pi-topOS Polaris and earlier versions.
 
