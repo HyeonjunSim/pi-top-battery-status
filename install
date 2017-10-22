@@ -3,16 +3,6 @@ if [ `whoami` = root ]; then
   exit 1
 fi
 
-# do not install on systems using pt-device-manager
-if sudo pgrep --full "pt-device-manager" > /dev/null
-then
-  echo "pt-device-manager is handling the pi-top-hardware on this system"
-  echo "It is recommended to use"
-  echo "https://github.com/rricharz/pi-top-battery-widget"
-  echo "instead of pi-top-battery-status(gtk_battery)"
-  echo "To uninstall pi-top-battery-status(gtk_battery), type ./uninstall"
-fi
-
 # kill any running gtk_battery command so that it can be overwritten
 pkill gtk_battery
 
