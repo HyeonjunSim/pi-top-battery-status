@@ -1,4 +1,9 @@
-# pi-top-battery-status (version 1.5)
+# pi-top-battery-status (deprecated)
+
+> This repository contains programs and information for the original pi-top laptop.
+> There is now new and improved software from pi-top available for Raspbian Stretch.
+> See details [here](http:github.com/rricharz/pi-top-battery-widget).
+> The software in this repository is therefore **deprecated**.
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
@@ -10,20 +15,6 @@
 ![Alt text](screenshot.jpg?raw=true "battery charge")
 
 The battery status is displayed on the desktop panel.
-
-> **Important!**
-> This program is for the original pi-top laptop.
-> It has not been tested with the new pi-top laptop (released October 13, 2017) with the sliding keyboard.
-> It will probably not work on this new device.
-
-> If you are using pi-topOS, consider using
-> [pi-top-battery-widget](http:github.com/rricharz/pi-top-battery-widget)
-> instead of pi-top-battery-status. It displays the battery icon in the system tray and
-> uses the pi-top hardware manager to obtain the battery information rather than polling
-> the battery directly. This eliminates unnecessary traffic on the i2c bus and is more in
-> line with the current pi-topOS software.
-
-The current version of the program works on the latest Raspbian Stretch, Raspbian Jessie, as well as on pi-topOS Polaris and earlier versions.
 
 Make sure that i2c is enabled in raspi-config.
 
@@ -92,64 +83,9 @@ The values have to be within the following limits:
   ./uninstall
 ```
 
-**Release history:**
-
-- Version 1.0:  First stable release
-- Version 1.0a: Fixed a minor bug, which could show a battery charge > 100% under rare circumstances
-- Version 1.1:  Improved reliability of capacity reading. Possibility to abort automatic low battery shutdown added.
-- Version 1.1a: i2c reliablity in log file, improved checking for i2c failures
-- Version 1.2:  Using direct i2c access rather than calling i2cget to reduce overhead, shutdown only if discharging at low capacity
-- Version 1.2a: Current and other additional information added
-- Version 1.2b: Warning and shutdown level changed
-- Version 1.3:  Important bug fixed which prevented automatic shutdown under certain circumstances
-- Version 1.4:  Very slight adjustment of battery charge display for new PIXEL desktop
-- Version 1.4a: Fixed a bug (segmentation fault when config file does not exist), thanks to @robvadenbogaard
-- Version 1.5:  Modified to work for other users
-
-**Updating pi-top-battery-status**
-
-If you still have the "pi-top-battery-status" in your "Downloads" folder, updating to the newest version
-is very easy. Open a terminal and type:
-
-```
-  cd Downloads/pi-top-battery-status
-  git pull
-  chmod +x install
-  ./install
-```
-
-If you do not have that folder anymore, you need to go again through the original installation instructions.
-
-
-**What to do if you have problems with your battery**
-
-See the troubleshooting guide at https://github.com/rricharz/pi-top-battery-status/blob/master/battery_problems.md
-
-**Using the program as a user other than pi**
-
-The latest version (1.5) has been modified to be used with other users than pi. If you want to install pi-top-battery-status
-for a different user, download and install it being that user. Make sure that the user has all the necessary privileges:
-See for example https://modmypi.com/blog/how-to-add-new-users-and-add-users-to-groups for details.
-
-Please open an issue on this repository if you have a problem with the program.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details. The owner of this
 repository is not affiliated with pi-top.
-
-*Other programs to display the pi-top-battery:*
-
-- If you prefer to display the battery gauche on a Pimorini Unicorn hat
-https://shop.pimoroni.com/products/unicorn-hat
-instead of the desktop panel, Jez Shed has written a python script, see
-https://github.com/JezShed/PiTop-Unicorn-Battery-Gauge
-
-- It is possible to use the standard battery display widget of the standard Raspbian desktop using
-"i2c bitbanging". Christopher Clements has written instructions for this, see
-https://github.com/bcnjr5/linux-pitop-battery. But be aware that the battery display in pi-topOS
-will not work with this approach, because the battery kernel module monopolizes the access to the battery pack.
-Thanks also to Krzysztof A. Adamski for the "i2c bitbanging" kernel module used in Christophers solution, see
-https://github.com/kadamski/i2c-gpio-param
-
