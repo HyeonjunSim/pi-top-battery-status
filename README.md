@@ -1,9 +1,17 @@
 # pi-top-battery-status (deprecated)
 
-> This repository contains programs and information for the original pi-top laptop.
-> There is now new and improved software from pi-top available for Raspbian Stretch.
-> See details [here](http:github.com/rricharz/pi-top-battery-widget).
-> The software in this repository is therefore **deprecated**.
+> **IMPORTANT!**
+> This repository contains deprecated programs and information for the original pi-top laptop.
+> There is now new and improved software available for using Raspbian Stretch on the pi-top.
+> See details here [up-to-date instructions for using Raspbian Stretch on the pi-top](http:github.com/rricharz/pi-top-setup).
+> The software in this repository is **deprecated**. It is **not** fully compatible with the latest
+> software for the pi-topSPEAKER and the pi-topPULSE, and does **not** work on the pi-top laptop version 2.
+> If you have used the software in this repository up to now, it is therefore strongly recommended to
+> switch to the up-to-date software (link above). The up-to-date software will also be required if you want
+> to use the standard battery plugin for Raspbian Stretch (Battery pi-top / laptop). A new version of this
+> standard Raspbian plugin, which will work with the pi-top laptop version 1 and 2 will be released very soon,
+> and will only work if you are using the up-to-date pi-top software for Raspbian Stretch (see above).
+
 
 - Displays the battery status of the pi-top battery
 (a laptop based on the raspberry pi, see http://pi-top.com)
